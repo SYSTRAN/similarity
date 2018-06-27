@@ -6,6 +6,7 @@ from random import shuffle
 import numpy as np
 import sys
 import time
+import gzip
 from collections import defaultdict
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -21,16 +22,20 @@ class Embeddings():
     def __init__(self, file, voc):
         w2e = {}
         if file is not None:
-            with io.open(file, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
-                self.num, self.dim = map(int, f.readline().split())
-                i = 0
-                for line in f:
-                    i += 1
-                    if i%10000 == 0:
-                        if i%100000 == 0: sys.stderr.write("{}".format(i))
-                        else: sys.stderr.write(".")
-                    tokens = line.rstrip().split(' ')
-                    if voc.exists(tokens[0]): w2e[tokens[0]] = tokens[1:] 
+            #with io.open(file, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
+            if file.endswith('.gz'): f = gzip.open(file, 'rb')
+            else: f = io.open(file, 'r', encoding='utf-8', newline='\n', errors='ignore')
+
+            self.num, self.dim = map(int, f.readline().split())
+            i = 0
+            for line in f:
+                i += 1
+                if i%10000 == 0:
+                    if i%100000 == 0: sys.stderr.write("{}".format(i))
+                    else: sys.stderr.write(".")
+                tokens = line.rstrip().split(' ')
+                if voc.exists(tokens[0]): w2e[tokens[0]] = tokens[1:] 
+            f.close()
             sys.stderr.write('Read {} embeddings ({} missing in voc)\n'.format(len(w2e),len(voc)-len(w2e)))
         else:
             sys.stderr.write('Embeddings not used!\n')
@@ -100,14 +105,19 @@ class Dataset():
         self.annotated = False
         self.data = []
         self.length = 0 ### length of the data set to be used (not necessarily the whole set)
-        with io.open(self.file, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
-            firstline = True
-            for line in f: 
-                if firstline:
-                    if len(line.split('\t'))==4: self.annotated = True
-                    firstline = False
-                self.data.append(line)
-                self.length += 1
+
+#        with io.open(self.file, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
+        if self.file.endswith('.gz'): f = gzip.open(self.file, 'rb')
+        else: f = io.open(self.file, 'r', encoding='utf-8', newline='\n', errors='ignore')
+        firstline = True
+        for line in f: 
+            if firstline:
+                if len(line.split('\t'))==4: self.annotated = True
+                firstline = False
+            self.data.append(line)
+            self.length += 1
+        f.close()
+
         if self.max_sents > 0:
             self.length = min(self.length,self.max_sents) 
         sys.stderr.write('({} contains {} examples)\n'.format(self.file,len(self.data)))

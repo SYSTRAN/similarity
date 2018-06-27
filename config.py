@@ -288,7 +288,7 @@ class Config():
     def write_config(self):
         if not os.path.exists(self.mdir): 
             os.makedirs(self.mdir)
-        file = self.mdir + "/epoch"+str(self.epoch)+".config"
+        file = self.mdir + "/epoch"+str(self.last_epoch)+".config"
         with open(file,"w") as f:
             for name, val in vars(self).items():
                 if name=="usage" or name.startswith("emb_") or name.startswith("voc_"): continue
