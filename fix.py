@@ -14,21 +14,15 @@ class Align():
         self.ltgt = len(align[0])
         self.max_cost_s = [[[None for c in range(self.ltgt)] for b in range(self.ltgt)] for a in range(self.lsrc)] # max_cost_s[0][1][2] means max cost of source word 0 from target word 1 to target word 2
         self.max_cost_t = [[[None for c in range(self.lsrc)] for b in range(self.lsrc)] for a in range(self.ltgt)]
-#        for s in range(len(align)):
-#            for t in range(len(align[s])):
-#                print("align[{}][{}]={}".format(s,t,align[s][t]))
 
     def max_s(self,s,t_ini,t_end):
         if self.max_cost_s[s][t_ini][t_end] is not None: 
             cmax = self.max_cost_s[s][t_ini][t_end]
-#            print("max_cost_s1({},{},{}) = {}".format(s,t_ini,t_end,cmax))
         elif t_ini == t_end:
             cmax = self.align[s][t_ini]
             self.max_cost_s[s][t_ini][t_end] = cmax
-#            print("max_cost_s2({},{},{}) = {}".format(s,t_ini,t_end,cmax))
         else:
             cmax = max(self.max_s(s,t_ini,t_end-1) , self.max_s(s,t_end,t_end))
-#            print("max_cost_s3({},{},{}) = {} = max({},{})".format(s,t_ini,t_end,cmax,self.max_s(s,t_ini,t_end-1),self.max_s(s,t_end,t_end)))
             self.max_cost_s[s][t_ini][t_end] = cmax
         return cmax
 
@@ -112,5 +106,44 @@ class Fix():
                 n += 1
                 if n >= self.nbest: break
 
+def main():
 
+    tau = 2
+    nbest = 15
+    max_sim = 0.1
+    ratio=3
+    name = sys.argv.pop(0)
+    usage = "usage: " + name + " [-tau INT] [-nbest INT] [-max_sim FLOAT]\n"
+    while len(sys.argv):
+        tok = sys.argv.pop(0)
+        if   (tok=="-tau" and len(sys.argv)):     tau = int(sys.argv.pop(0))
+        elif (tok=="-nbest" and len(sys.argv)):   nbest = int(sys.argv.pop(0))
+        elif (tok=="-max_sim" and len(sys.argv)): max_sim = float(sys.argv.pop(0))
+        elif (tok=="-h"):
+            sys.stderr.write("{}".format(usage))
+            sys.exit()
+        else:
+            sys.stderr.write('error: unparsed {} option\n'.format(tok))
+            sys.stderr.write("{}".format(usage))
+            sys.exit()
 
+    fix = Fix(tau,nbest,max_sim)
+    n_sent = 0
+    for line in sys.stdin:
+        n_sent += 1
+        tokens = line.strip().split('\t')
+        sim = float(tokens.pop(0))
+        #print(sim)
+        src = tokens.pop(0).split(' ')
+        #print(src)
+        tgt = tokens.pop(0).split(' ')
+        #print(tgt)
+        align = []
+        while len(tokens) > 0:
+            align_tgt = map(float, tokens.pop(0).split(' '))
+            align.append(align_tgt)
+        #print(align)
+        fix.print_fix_square(src,tgt,align,sim,n_sent)
+
+if __name__ == "__main__":
+    main()
