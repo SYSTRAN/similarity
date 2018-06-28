@@ -262,7 +262,7 @@ class Model():
                 curr_time = time.strftime("[%Y-%m-%d_%X]", time.localtime())
                 iscore.update()
                 ILOSS = ILOSS/self.config.report_every
-                sys.stdout.write('{} Epoch {} Iteration {}/{} batch_size={} loss:{:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})\n'.format(curr_time,curr_epoch,iter+1,nbatches,self.config.batch_size,ILOSS,iscore.A,iscore.P,iscore.R,iscore.F))
+                sys.stdout.write('{} Epoch {} Iteration {}/{} loss:{:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})\n'.format(curr_time,curr_epoch,iter+1,nbatches,ILOSS,iscore.A,iscore.P,iscore.R,iscore.F))
                 ILOSS = 0
                 iscore = Score()
 
@@ -311,7 +311,7 @@ class Model():
     def learn(self, train, dev, n_epochs):
         lr = self.config.lr
         curr_time = time.strftime("[%Y-%m-%d_%X]", time.localtime())
-        sys.stdout.write("{} Training with {} examples (sentence pairs): {} batches.\n".format(curr_time,len(train),(len(train)+self.config.batch_size-1)//self.config.batch_size))
+        sys.stdout.write("{} Training with {} examples (sentence pairs): {} batches with {} examples each.\n".format(curr_time,len(train),(len(train)+self.config.batch_size-1)//self.config.batch_size,self.config.batch_size))
         best_score = 0
         best_epoch = 0
         for iter in range(n_epochs):
