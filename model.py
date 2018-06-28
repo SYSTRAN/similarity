@@ -262,22 +262,20 @@ class Model():
                 curr_time = time.strftime("[%Y-%m-%d_%X]", time.localtime())
                 iscore.update()
                 ILOSS = ILOSS/self.config.report_every
-                sys.stdout.write('{} Epoch {} Iteration {}/{} batch_size={} lr:{:.4f} loss:{:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})\n'.format(curr_time,curr_epoch,iter+1,nbatches,self.config.batch_size,lr,ILOSS,iscore.A,iscore.P,iscore.R,iscore.F))
+                sys.stdout.write('{} Epoch {} Iteration {}/{} batch_size={} loss:{:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})\n'.format(curr_time,curr_epoch,iter+1,nbatches,self.config.batch_size,ILOSS,iscore.A,iscore.P,iscore.R,iscore.F))
                 ILOSS = 0
                 iscore = Score()
 
         TLOSS = TLOSS/nbatches
         tscore.update()
         curr_time = time.strftime("[%Y-%m-%d_%X]", time.localtime())
-        sys.stdout.write('{} Epoch {}'.format(curr_time,curr_epoch))
-        sys.stdout.write('{} TRAINING loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f}) lr={:.4f}'.format(curr_time,TLOSS,tscore.A,tscore.P,tscore.R,tscore.F,lr))
+        sys.stdout.write('{} Epoch {} TRAINING lr={:.4f} loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})\n'.format(curr_time,curr_epoch,lr,TLOSS,tscore.A,tscore.P,tscore.R,tscore.F))
 
         # evaluate over devset
         if self.config.dev is not None:
             VLOSS, vscore = self.run_eval(dev)
-            sys.stdout.write('{} VALIDATION loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})\n'.format(curr_time,VLOSS,vscore.A,vscore.P,vscore.R,vscore.F))
+            sys.stdout.write('{} Epoch {} VALIDATION loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})\n'.format(curr_time,curr_epoch,VLOSS,vscore.A,vscore.P,vscore.R,vscore.F))
         else:
-            sys.stdout.write('\n')
             VLOSS = 0.0
 
         unk_src = float(100) * train.nunk_src / train.nsrc
