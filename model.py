@@ -269,22 +269,22 @@ class Model():
         TLOSS = TLOSS/nbatches
         tscore.update()
         curr_time = time.strftime("[%Y-%m-%d_%X]", time.localtime())
-        sys.stdout.write('{} Epoch {} TRAINING lr={:.4f} loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})'.format(curr_time,curr_epoch,lr,TLOSS,tscore.A,tscore.P,tscore.R,tscore.F))
+        sys.stdout.write('{} Epoch {} TRAIN lr={:.4f} loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})'.format(curr_time,curr_epoch,lr,TLOSS,tscore.A,tscore.P,tscore.R,tscore.F))
         unk_src = float(100) * train.nunk_src / train.nsrc
         unk_tgt = float(100) * train.nunk_tgt / train.ntgt
         div_src = float(100) * train.ndiv_src / train.nsrc
         div_tgt = float(100) * train.ndiv_tgt / train.ntgt
-        sys.stdout.write(' Training set: words={}/{} %div={:.2f}/{:.2f} %unk={:.2f}/{:.2f}\n'.format(train.nsrc,train.ntgt,div_src,div_tgt,unk_src,unk_tgt))
+        sys.stdout.write(' Train set: words={}/{} %div={:.2f}/{:.2f} %unk={:.2f}/{:.2f}\n'.format(train.nsrc,train.ntgt,div_src,div_tgt,unk_src,unk_tgt))
 
         # evaluate over devset
         if self.config.dev is not None:
             VLOSS, vscore = self.run_eval(dev)
-            sys.stdout.write('{} Epoch {} VALIDATION loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})'.format(curr_time,curr_epoch,VLOSS,vscore.A,vscore.P,vscore.R,vscore.F))
+            sys.stdout.write('{} Epoch {} VALID loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})'.format(curr_time,curr_epoch,VLOSS,vscore.A,vscore.P,vscore.R,vscore.F))
             unk_src = float(100) * dev.nunk_src / dev.nsrc
             unk_tgt = float(100) * dev.nunk_tgt / dev.ntgt
             div_src = float(100) * dev.ndiv_src / dev.nsrc
             div_tgt = float(100) * dev.ndiv_tgt / dev.ntgt
-            sys.stdout.write(' Validation set words={}/{} %div={:.2f}/{:.2f} %unk={:.2f}/{:.2f}\n'.format(dev.nsrc,dev.ntgt,div_src,div_tgt,unk_src,unk_tgt,VLOSS,vscore.A,vscore.P,vscore.R,vscore.F))
+            sys.stdout.write(' Valid set words={}/{} %div={:.2f}/{:.2f} %unk={:.2f}/{:.2f}\n'.format(dev.nsrc,dev.ntgt,div_src,div_tgt,unk_src,unk_tgt,VLOSS,vscore.A,vscore.P,vscore.R,vscore.F))
         else:
             VLOSS = 0.0
 
