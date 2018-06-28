@@ -269,7 +269,7 @@ class Model():
         TLOSS = TLOSS/nbatches
         tscore.update()
         curr_time = time.strftime("[%Y-%m-%d_%X]", time.localtime())
-        sys.stdout.write('{} Epoch {} TRAIN lr={:.4f} loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})'.format(curr_time,curr_epoch,lr,TLOSS,tscore.A,tscore.P,tscore.R,tscore.F))
+        sys.stdout.write('{} Epoch {} TRAIN loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f}) lr={:.4f}'.format(curr_time,curr_epoch,TLOSS,tscore.A,tscore.P,tscore.R,tscore.F,lr))
         unk_src = float(100) * train.nunk_src / train.nsrc
         unk_tgt = float(100) * train.nunk_tgt / train.ntgt
         div_src = float(100) * train.ndiv_src / train.nsrc
