@@ -270,23 +270,27 @@ class Model():
         tscore.update()
         curr_time = time.strftime("[%Y-%m-%d_%X]", time.localtime())
         sys.stdout.write('{} Epoch {}'.format(curr_time,curr_epoch))
-        unk_src = float(100) * train.nunk_src / train.nsrc
-        unk_tgt = float(100) * train.nunk_tgt / train.ntgt
-        div_src = float(100) * train.ndiv_src / train.nsrc
-        div_tgt = float(100) * train.ndiv_tgt / train.ntgt
-        sys.stdout.write(' TRAINING words={}/{} %div={:.2f}/{:.2f} %unk={:.2f}/{:.2f} loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f}) lr={:.4f}'.format(train.nsrc,train.ntgt,div_src,div_tgt,unk_src,unk_tgt,TLOSS,tscore.A,tscore.P,tscore.R,tscore.F,lr))
+        sys.stdout.write(' TRAINING loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f}) lr={:.4f}'.format(TLOSS,tscore.A,tscore.P,tscore.R,tscore.F,lr))
 
         # evaluate over devset
         if self.config.dev is not None:
             VLOSS, vscore = self.run_eval(dev)
+            sys.stdout.write(' VALIDATION loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})\n'.format(VLOSS,vscore.A,vscore.P,vscore.R,vscore.F))
+        else:
+            sys.stdout.write('\n')
+            VLOSS = 0.0
+
+        unk_src = float(100) * train.nunk_src / train.nsrc
+        unk_tgt = float(100) * train.nunk_tgt / train.ntgt
+        div_src = float(100) * train.ndiv_src / train.nsrc
+        div_tgt = float(100) * train.ndiv_tgt / train.ntgt
+        sys.stdout.write('Training set: words={}/{} %div={:.2f}/{:.2f} %unk={:.2f}/{:.2f}'.format(train.nsrc,train.ntgt,div_src,div_tgt,unk_src,unk_tgt))
+        if self.config.dev is not None:
             unk_src = float(100) * dev.nunk_src / dev.nsrc
             unk_tgt = float(100) * dev.nunk_tgt / dev.ntgt
             div_src = float(100) * dev.ndiv_src / dev.nsrc
             div_tgt = float(100) * dev.ndiv_tgt / dev.ntgt
-            sys.stdout.write(' VALIDATION words={}/{} %div={:.2f}/{:.2f} %unk={:.2f}/{:.2f} loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})\n'.format(dev.nsrc,dev.ntgt,div_src,div_tgt,unk_src,unk_tgt,VLOSS,vscore.A,vscore.P,vscore.R,vscore.F))
-        else:
-            sys.stdout.write('\n')
-            VLOSS = 0.0
+            sys.stdout.write('Validation set words={}/{} %div={:.2f}/{:.2f} %unk={:.2f}/{:.2f}\n'.format(dev.nsrc,dev.ntgt,div_src,div_tgt,unk_src,unk_tgt,VLOSS,vscore.A,vscore.P,vscore.R,vscore.F))
 
         #keep record of current epoch
         self.config.tloss = TLOSS
@@ -311,7 +315,7 @@ class Model():
     def learn(self, train, dev, n_epochs):
         lr = self.config.lr
         curr_time = time.strftime("[%Y-%m-%d_%X]", time.localtime())
-        sys.stdout.write("{} Training with {} examples (sentence pairs): {} batches. Found {}/{} unknown words {}/{} divergent words.\n".format(curr_time,len(train),(len(train)+self.config.batch_size-1)//self.config.batch_size,train.nunk_src,train.nunk_tgt,train.ndiv_src,train.ndiv_tgt))
+        sys.stdout.write("{} Training with {} examples (sentence pairs): {} batches.\n".format(curr_time,len(train),(len(train)+self.config.batch_size-1)//self.config.batch_size))
         best_score = 0
         best_epoch = 0
         for iter in range(n_epochs):
