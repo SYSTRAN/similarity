@@ -311,7 +311,7 @@ class Model():
     def learn(self, train, dev, n_epochs):
         lr = self.config.lr
         curr_time = time.strftime("[%Y-%m-%d_%X]", time.localtime())
-        sys.stdout.write("{} Training with {} examples (sentence pairs) {} batches\n".format(curr_time,len(train),(len(train)+self.config.batch_size-1)//self.config.batch_size))
+        sys.stdout.write("{} Training with {} examples (sentence pairs): {} batches. Found {}/{} unknown words {}/{} divergent words.\n".format(curr_time,len(train),(len(train)+self.config.batch_size-1)//self.config.batch_size,train.nunk_src,train.nunk_tgt,train.ndiv_src,train.ndiv_tgt))
         best_score = 0
         best_epoch = 0
         for iter in range(n_epochs):
