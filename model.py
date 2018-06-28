@@ -236,8 +236,7 @@ class Model():
         return LOSS/nbatches, score
 
     def run_epoch(self, train, dev, lr):
-#        nbatches = (len(train) + self.config.batch_size - 1) // self.config.batch_size
-        nbatches = 1 + (len(train) // self.config.batch_size)
+        nbatches = (len(train) + self.config.batch_size - 1) // self.config.batch_size
         curr_epoch = self.config.last_epoch + 1
         TLOSS = 0 # training loss
         ILOSS = 0 # intermediate loss (average over [config.report_every] iterations)
