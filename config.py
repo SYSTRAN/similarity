@@ -30,7 +30,7 @@ class Config():
    -src_lstm_size  INT : hidden units for src bi-lstm [256]
    -tgt_lstm_size  INT : hidden units for tgt bi-lstm [256]
 
-   -lr           FLOAT : initial learning rate [0.1]
+   -lr           FLOAT : initial learning rate [1.0]
    -lr_decay     FLOAT : learning rate decay [0.9]
    -lr_method   STRING : GD method either: adam, adagrad, adadelta, sgd, rmsprop [adagrad]
    -aggr          TYPE : aggregation operation: sum, max, lse [lse]
@@ -78,7 +78,7 @@ class Config():
         self.aggr = "lse"
         self.r = 1.0
         self.dropout = 0.3
-        self.lr = 0.1
+        self.lr = 1.0
         self.lr_decay = 0.9
         self.lr_method = "adagrad"
 
