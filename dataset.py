@@ -148,6 +148,9 @@ class Dataset():
             else:
                 src_tag_txt = tokens[2].split(' ')
                 tgt_tag_txt = tokens[3].split(' ')
+                if len(tgt_tag_txt)!=len(tgt) or len(src_tag_txt)!=len(src):
+                    sys.stderr.write("warning: diff num of words/tags \'{}\' in line={} [skipped]\n".format(self.data[index],index+1))
+                    continue
                 
             isrc, itgt, src_tag, tgt_tag = self.build_example(src,tgt,src_tag_txt,tgt_tag_txt)
             self.keep_records(src_tag, tgt_tag, isrc, itgt)
