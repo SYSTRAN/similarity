@@ -437,7 +437,7 @@ class Model():
         for x in range(len(tgt)): ### tgt
             if aggr_tgt[x]<0: col="red"
             else: col="black"
-            col="black"
+#            col="black" ### remove this line if you want divergent colors in red
             print "<text x=\""+str(x*len_square + start_x + separation)+"\" y=\""+str(start_y-10)+"\" fill=\""+col+"\" font-family=\"Courier\" font-size=\"10\" transform=\"rotate(-45 "+str(x*len_square + start_x + 10)+","+str(start_y-10)+") \">"+tgt[x]+"&nbsp;{:+.1f}".format(aggr_tgt[x])+"</text>"
         for y in range(len(src)): ### src
             for x in range(len(tgt)): ### tgt
@@ -449,12 +449,12 @@ class Model():
                 print "<rect x=\""+str(x*len_square + start_x)+"\" y=\""+str(y*len_square + start_y)+"\" width=\""+str(len_square)+"\" height=\""+str(len_square)+"\" style=\"fill:rgb("+str(color)+","+str(color)+","+str(color)+"); stroke-width:1;stroke:rgb(200,200,200)\" />"
                 txtcolor = "black"
                 if align[y][x] < 0: txtcolor="red"
-                print "<text x=\""+str(x*len_square + start_x + len_square*1/6)+"\" y=\""+str(y*len_square + start_y + len_square*3/4)+"\" fill=\"{}\" font-family=\"Courier\" font-size=\"5\">".format(txtcolor)+"{:+.1f}".format(align[y][x])+"</text>"
+                print "<text x=\""+str(x*len_square + start_x + len_square*1/8)+"\" y=\""+str(y*len_square + start_y + len_square*3/4)+"\" fill=\"{}\" font-family=\"Courier\" font-size=\"5\">".format(txtcolor)+"{:+.1f}".format(align[y][x])+"</text>"
 
 
             if aggr_src[y]<0: col="red" ### last column with source words
             else: col="black"
-            col="black" ### remove this line if you want divergent colors in red
+#            col="black" ### remove this line if you want divergent colors in red
             print "<text x=\""+str(len_x*len_square + start_x + separation)+"\" y=\""+str(y*len_square + start_y + len_square*3/4)+"\" fill=\""+col+"\" font-family=\"Courier\" font-size=\"10\">"+src[y]+"&nbsp;{:+.1f}".format(aggr_src[y])+"</text>"
         print("<br>\n<svg width=\"200\" height=\"20\">")
         print("<text x=\"{}\" y=\"10\" fill=\"black\" font-family=\"Courier\" font-size=\"8\"\">{:+.4f}</text>".format(start_x,sim))
