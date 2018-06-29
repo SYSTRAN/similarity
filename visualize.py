@@ -47,12 +47,13 @@ class Visualize():
         len_x = len(self.tgt)
         len_y = len(self.src)
         separation = 2
-        print "<br>\n<svg width=\""+str(len_x*len_square + start_x + 100)+"\" height=\""+str(len_y*len_square + start_y)+"\">"
+        print "<br>\n<svg width=\""+str(len_x*len_square + start_x + 150)+"\" height=\""+str(len_y*len_square + start_y)+"\">"
         for x in range(len(self.tgt)): ### tgt
             if aggr_tgt[x]<0: col="red"
             else: col="black"
-#            col="black" ### remove this line if you want divergent colors in red
-            print "<text x=\""+str(x*len_square + start_x + separation)+"\" y=\""+str(start_y-10)+"\" fill=\""+col+"\" font-family=\"Courier\" font-size=\"10\" transform=\"rotate(-45 "+str(x*len_square + start_x + 10)+","+str(start_y-10)+") \">"+self.tgt[x]+"&nbsp;{:+.1f}".format(aggr_tgt[x])+"</text>"
+            print "<text x=\""+str(x*len_square + start_x)+"\" y=\""+str(start_y-2)+"\" fill=\""+col+"\" font-family=\"Courier\" font-size=\"5\">"+"{:+.1f}".format(aggr_tgt[x])+"</text>"
+#            col="black" ### remove this line if you want divergent words in red
+            print "<text x=\""+str(x*len_square + start_x + separation)+"\" y=\""+str(start_y-15)+"\" fill=\""+col+"\" font-family=\"Courier\" font-size=\"10\" transform=\"rotate(-45 "+str(x*len_square + start_x + 10)+","+str(start_y-15)+") \">"+self.tgt[x]+"</text>"
         for y in range(len(self.src)): ### src
             for x in range(len(self.tgt)): ### tgt
                 color = align[y][x]
@@ -64,12 +65,12 @@ class Visualize():
                 txtcolor = "black"
                 if align[y][x] < 0: txtcolor="red"
                 print "<text x=\""+str(x*len_square + start_x)+"\" y=\""+str(y*len_square + start_y + len_square*3/4)+"\" fill=\"{}\" font-family=\"Courier\" font-size=\"5\">".format(txtcolor)+"{:+.1f}".format(align[y][x])+"</text>"
-#+ len_square *1/10
 
             if aggr_src[y]<0: col="red" ### last column with source words
             else: col="black"
-#            col="black" ### remove this line if you want divergent colors in red
-            print "<text x=\""+str(len_x*len_square + start_x + separation)+"\" y=\""+str(y*len_square + start_y + len_square*3/4)+"\" fill=\""+col+"\" font-family=\"Courier\" font-size=\"10\">"+self.src[y]+"&nbsp;{:+.1f}".format(aggr_src[y])+"</text>"
+            print "<text x=\""+str(len_x*len_square + start_x + separation)+"\" y=\""+str(y*len_square + start_y + len_square*3/4)+"\" fill=\""+col+"\" font-family=\"Courier\" font-size=\"5\">"+"{:+.1f}".format(aggr_src[y])+"</text>"
+#            col="black" ### remove this line if you want divergent words in red
+            print "<text x=\""+str(len_x*len_square + start_x + separation*10)+"\" y=\""+str(y*len_square + start_y + len_square*3/4)+"\" fill=\""+col+"\" font-family=\"Courier\" font-size=\"10\">"+self.src[y]+"</text>"
         print("<br>\n<svg width=\"200\" height=\"20\">")
         print("<text x=\"{}\" y=\"10\" fill=\"black\" font-family=\"Courier\" font-size=\"8\"\">{:+.4f}</text>".format(start_x,self.sim))
 
