@@ -17,6 +17,7 @@ class Config():
    -batch_size     INT : number of examples per batch [32]
    -seed           INT : seed for randomness [1234]
    -debug              : debug mode 
+   -h                  : this help message
 
  [LEARNING OPTIONS]
 *  -trn           FILE : training data
@@ -206,7 +207,7 @@ class Config():
             #write topology file
             with open(self.mdir + "/topology", 'w') as f: 
                 for opt, val in vars(self).items():
-                    if opt.startswith("src") or opt.startswith("tgt") or opt=="aggr": f.write("{} {}\n".format(opt,val))
+                    if opt.startswith("src") or opt.startswith("tgt") or opt=="aggr" or opt=="mode": f.write("{} {}\n".format(opt,val))
             print("learning from scratch")
         return  
 
@@ -272,8 +273,6 @@ class Config():
                 self.lr_decay = float(argv.pop(0))
             elif (tok=="-lr_method" and len(argv)):
                 self.lr_method = argv.pop(0)
-            elif (tok=="-data_mode" and len(argv)):
-                self.data_mode = argv.pop(0)
             elif (tok=="-mode" and len(argv)):
                 self.mode = argv.pop(0)
 
