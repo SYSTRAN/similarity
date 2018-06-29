@@ -17,7 +17,7 @@ class Config():
    -batch_size     INT : number of examples per batch [32]
    -seed           INT : seed for randomness [1234]
    -debug              : debug mode 
-   -h                  : this help message
+   -h                  : this message
 
  [LEARNING OPTIONS]
 *  -trn           FILE : training data
