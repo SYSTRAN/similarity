@@ -160,7 +160,7 @@ class Config():
             if not os.path.exists(self.mdir + '/topology'): 
                 sys.stderr.write('error: topology file: {} cannot be find\n'.format(self.mdir + '/topology'))
                 sys.exit()
-           if not os.path.exists(self.mdir + '/vocab_src'): 
+            if not os.path.exists(self.mdir + '/vocab_src'): 
                 sys.stderr.write('error: vocab_src file: {} cannot be find\n'.format(self.mdir + '/vocab_src'))
                 sys.exit()
             if not os.path.exists(self.mdir + '/vocab_tgt'): 
