@@ -117,14 +117,20 @@ class Config():
         if not self.epoch:
             sys.stderr.write("error: Missing -epoch option\n{}".format(self.usage))
             sys.exit()
-        if not os.path.exists(self.mdir + '/epoch' + self.epoch + '.index'):
-            sys.stderr.write('error: -epoch file {} cannot be find\n'.format(self.mdir + '/epoch' + self.epoch + '.index'))
-            sys.exit()
         if not os.path.exists(self.tst):
             sys.stderr.write('error: -tst file {} cannot be find\n'.format(self.tst))
             sys.exit()
+        if not os.path.exists(self.mdir + '/epoch' + self.epoch + '.index'):
+            sys.stderr.write('error: -epoch file {} cannot be find\n'.format(self.mdir + '/epoch' + self.epoch + '.index'))
+            sys.exit()
         if not os.path.exists(self.mdir + '/topology'): 
             sys.stderr.write('error: topology file: {} cannot be find\n'.format(self.mdir + '/topology'))
+            sys.exit()
+        if not os.path.exists(self.mdir + '/vocab_src'): 
+            sys.stderr.write('error: vocab_src file: {} cannot be find\n'.format(self.mdir + '/vocab_src'))
+            sys.exit()
+        if not os.path.exists(self.mdir + '/vocab_tgt'): 
+            sys.stderr.write('error: vocab_tgt file: {} cannot be find\n'.format(self.mdir + '/vocab_tgt'))
             sys.exit()
         argv = []
         with open(self.mdir + "/topology", 'r') as f:
@@ -152,6 +158,12 @@ class Config():
         if os.path.exists(self.mdir): 
             if not os.path.exists(self.mdir + '/topology'): 
                 sys.stderr.write('error: topology file: {} cannot be find\n'.format(self.mdir + '/topology'))
+                sys.exit()
+           if not os.path.exists(self.mdir + '/vocab_src'): 
+                sys.stderr.write('error: vocab_src file: {} cannot be find\n'.format(self.mdir + '/vocab_src'))
+                sys.exit()
+            if not os.path.exists(self.mdir + '/vocab_tgt'): 
+                sys.stderr.write('error: vocab_tgt file: {} cannot be find\n'.format(self.mdir + '/vocab_tgt'))
                 sys.exit()
             if not os.path.exists(self.mdir + '/checkpoint'): 
                 sys.stderr.write('error: checkpoint file: {} cannot be find\ndelete dir {} ???\n'.format(self.mdir + '/checkpoint', self.mdir))
