@@ -449,8 +449,8 @@ class Model():
                 print "<rect x=\""+str(x*len_square + start_x)+"\" y=\""+str(y*len_square + start_y)+"\" width=\""+str(len_square)+"\" height=\""+str(len_square)+"\" style=\"fill:rgb("+str(color)+","+str(color)+","+str(color)+"); stroke-width:1;stroke:rgb(200,200,200)\" />"
                 txtcolor = "black"
                 if align[y][x] < 0: txtcolor="red"
-                print "<text x=\""+str(x*len_square + start_x + len_square*1/10)+"\" y=\""+str(y*len_square + start_y + len_square*3/4)+"\" fill=\"{}\" font-family=\"Courier\" font-size=\"5\">".format(txtcolor)+"{:+.1f}".format(align[y][x])+"</text>"
-
+                print "<text x=\""+str(x*len_square + start_x)+"\" y=\""+str(y*len_square + start_y + len_square*3/4)+"\" fill=\"{}\" font-family=\"Courier\" font-size=\"5\">".format(txtcolor)+"{:+.1f}".format(align[y][x])+"</text>"
+#+ len_square *1/10
 
             if aggr_src[y]<0: col="red" ### last column with source words
             else: col="black"
