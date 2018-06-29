@@ -8,6 +8,7 @@ import time
 from random import randint
 from config import Config
 from dataset import minibatches
+from visualize import Visualize
 
 class Score():
     def __init__(self):
@@ -327,137 +328,65 @@ class Model():
 ### inference #####
 ###################
 
-    def run_tst(self, tst):
-        nbatches = (len(tst) + self.config.batch_size - 1) // self.config.batch_size
-        # iterate over dataset
-        score = Score()
-        for iter, (src_batch, tgt_batch, raw_src_batch, raw_tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch) in enumerate(minibatches(tst, self.config.batch_size)):
-            fd = self.get_feed_dict(src_batch, tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch, 0.0)
-            if self.config.mode == "sentence":
-                sim = self.sess.run(self.cos_similarity, feed_dict=fd)
-                score.add_batch(sim, sign_batch)
-            else:
-                aggr_src, aggr_tgt = self.sess.run([self.aggregation_src, self.aggregation_tgt], feed_dict=fd)
-                score.add_batch_tokens(aggr_src, sign_src_batch, len_src_batch)
-                score.add_batch_tokens(aggr_tgt, sign_tgt_batch, len_tgt_batch)
-        score.update()
-        return score
-
     def inference(self, tst):
-
-        if tst.annotated and not self.config.show_svg and not self.config.show_matrix and not self.config.show_last and not self.config.show_aggr and not self.config.show_align:
-            score = self.run_tst(tst)
-            unk_s = float(100) * tst.nunk_src / tst.nsrc
-            unk_t = float(100) * tst.nunk_tgt / tst.ntgt
-            div_s = float(100) * tst.ndiv_src / tst.nsrc
-            div_t = float(100) * tst.ndiv_tgt / tst.ntgt
-            sys.stdout.write('TEST words={}/{} %div={:.2f}/{:.2f} %unk={:.2f}/{:.2f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f}) (TP:{},TN:{},FP:{},FN:{})\n'.format(tst.nsrc,tst.ntgt,div_s,div_t,unk_s,unk_t,score.A,score.P,score.R,score.F,score.TP,score.TN,score.FP,score.FN))
-            return
 
         if self.config.show_svg: print "<html>\n<body>"
         nbatches = (len(tst) + self.config.batch_size - 1) // self.config.batch_size
+        score = Score()
         n_sents = 0
         for iter, (src_batch, tgt_batch, raw_src_batch, raw_tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch) in enumerate(minibatches(tst, self.config.batch_size)):
             fd = self.get_feed_dict(src_batch, tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch, 0.0) 
 
             if self.config.mode == "sentence":
                 sim_batch, last_src_batch, last_tgt_batch = self.sess.run([self.cos_similarity, self.last_src, self.last_tgt], feed_dict=fd)
+                if tst.annotated: score.add_batch(sim_batch, sign_batch)
                 for i_sent in range(len(sim_batch)):
-                    raw_src =  " ".join(str(s) for s in raw_src_batch[i_sent])
-                    raw_tgt =  " ".join(str(s) for s in raw_tgt_batch[i_sent])
+                    n_sents += 1
+                    v = Visualize(n_sents,raw_src_batch[i_sent],raw_tgt_batch[i_sent],sim_batch[i_sent])
+                    last_src = []
+                    last_src = []
                     if self.config.show_last:
-                        last_src = " ".join(str(s) for s in last_src_batch[i_sent])
-                        last_tgt = " ".join(str(s) for s in last_tgt_batch[i_sent])
-                        print ("{:.4f}\t{}\t{}\t{}\t{}".format(sim_batch[i_sent], raw_src, raw_tgt, last_src, last_tgt))
-                    else:
-                        print ("{:.4f}\t{}\t{}".format(sim_batch[i_sent], raw_src, raw_tgt))
+                        last_src = last_src_batch[i_sent]
+                        last_tgt = last_tgt_batch[i_sent]
+                    v.print_vectors(last_src,last_tgt,aggr_src=[],aggr_tgt=[],align=[])
             else:   
                 align_batch, aggr_src_batch, aggr_tgt_batch, out_src_batch, out_tgt_batch, last_src_batch, last_tgt_batch, sim_batch = self.sess.run([self.align, self.aggregation_src, self.aggregation_tgt, self.out_src, self.out_tgt, self.last_src, self.last_tgt, self.cos_similarity], feed_dict=fd)
+                if tst.annotated: 
+                    score.add_batch_tokens(aggr_src_batch, sign_src_batch, len_src_batch)
+                    score.add_batch_tokens(aggr_tgt_batch, sign_tgt_batch, len_tgt_batch)
                 for i_sent in range(len(align_batch)):
                     n_sents += 1
+                    v = Visualize(n_sents,raw_src_batch[i_sent],raw_tgt_batch[i_sent],sim_batch[i_sent])
                     if self.config.show_svg: 
-                        self.print_svg(n_sents,raw_src_batch[i_sent],raw_tgt_batch[i_sent],align_batch[i_sent],aggr_src_batch[i_sent],aggr_tgt_batch[i_sent],sim_batch[i_sent])
+                        v.print_svg(aggr_src_batch[i_sent],aggr_tgt_batch[i_sent],align_batch[i_sent])
                     elif self.config.show_matrix: 
-                        self.print_matrix(n_sents,raw_src_batch[i_sent],raw_tgt_batch[i_sent],align_batch[i_sent],aggr_src_batch[i_sent],aggr_tgt_batch[i_sent],sim_batch[i_sent])
+                        v.print_matrix(aggr_src_batch[i_sent],aggr_tgt_batch[i_sent],align_batch[i_sent])
                     else:
-                        toks = []
-                        raw_src =  " ".join(str(s) for s in raw_src_batch[i_sent])
-                        raw_tgt =  " ".join(str(s) for s in raw_tgt_batch[i_sent])
-                        toks.append(raw_src)
-                        toks.append(raw_tgt)
+                        last_src = []
+                        last_tgt = []
+                        aggr_src = []
+                        aggr_tgt = []
+                        align = []
                         if self.config.show_last: 
-                            last_src = " ".join("{:.4f}".format(s) for s in last_src_batch[i_sent])
-                            last_tgt = " ".join("{:.4f}".format(t) for t in last_tgt_batch[i_sent])
-                            toks.append(last_src)
-                            toks.append(last_tgt)
+                            last_src = last_src_batch[i_sent]
+                            last_tgt = last_tgt_batch[i_sent]
                         if self.config.show_aggr: 
-                            aggr_src = " ".join(str("{:.4f}".format(aggr_src_batch[i_sent][s])) for s in range(len_src_batch[i_sent]))
-                            aggr_tgt = " ".join(str("{:.4f}".format(aggr_tgt_batch[i_sent][s])) for s in range(len_tgt_batch[i_sent]))
-                            toks.append(aggr_src)
-                            toks.append(aggr_tgt)
+                            aggr_src = aggr_src_batch[i_sent]
+                            aggr_tgt = aggr_tgt_batch[i_sent]
                         if self.config.show_align: 
-                            matrix_row = []
-                            for s in range(len_src_batch[i_sent]):
-                                row = " ".join("{:.4f}".format(align_batch[i_sent,s,t]) for t in range(len_tgt_batch[i_sent]))
-                                matrix_row.append(row)
-                            matrix = "\t".join(row for row in matrix_row)
-                            toks.append(matrix)
-                        print ("{:.4f}\t{}".format(sim_batch[i_sent], "\t".join(toks)))
+                            align = align_batch[i_sent]
+                        v.print_vectors(last_src,last_tgt,aggr_src,aggr_tgt,align)
+
+        if tst.annotated:
+            score.update()
+            unk_s = float(100) * tst.nunk_src / tst.nsrc
+            unk_t = float(100) * tst.nunk_tgt / tst.ntgt
+            div_s = float(100) * tst.ndiv_src / tst.nsrc
+            div_t = float(100) * tst.ndiv_tgt / tst.ntgt
+            sys.stdout.write('TEST words={}/{} %div={:.2f}/{:.2f} %unk={:.2f}/{:.2f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f}) (TP:{},TN:{},FP:{},FN:{})\n'.format(tst.nsrc,tst.ntgt,div_s,div_t,unk_s,unk_t,score.A,score.P,score.R,score.F,score.TP,score.TN,score.FP,score.FN))
 
         if self.config.show_svg: print "</body>\n</html>"
 
-
-    def print_matrix(self, n_sents, src, tgt, align, aggr_src, aggr_tgt, sim):
-        print('<:::{}:::> cosine sim = {:.4f}'.format(n_sents, sim))
-        source = list(src)
-        target = list(tgt)
-        for s in range(len(source)):
-            if aggr_src[s]<0: source[s] = '*'+source[s] 
-        for t in range(len(target)):
-            if aggr_tgt[t]<0: target[t] = '*'+target[t] 
-
-        max_length_tgt_tokens = max(5,max([len(x) for x in target]))
-        A = str(max_length_tgt_tokens+1)
-        print(''.join(("{:"+A+"}").format(t) for t in target))
-        for s in range(len(source)):
-            for t in range(len(target)):
-                myscore = "{:+.2f}".format(align[s][t])
-                while len(myscore) < max_length_tgt_tokens+1: myscore += ' '
-                sys.stdout.write(myscore)
-            print(source[s])
-
-    def print_svg(self, n_sents, src, tgt, align, aggr_src, aggr_tgt, sim):
-        start_x = 25
-        start_y = 100
-        len_square = 15
-        len_x = len(tgt)
-        len_y = len(src)
-        separation = 2
-        print "<br>\n<svg width=\""+str(len_x*len_square + start_x + 100)+"\" height=\""+str(len_y*len_square + start_y)+"\">"
-        for x in range(len(tgt)): ### tgt
-            if aggr_tgt[x]<0: col="red"
-            else: col="black"
-#            col="black" ### remove this line if you want divergent colors in red
-            print "<text x=\""+str(x*len_square + start_x + separation)+"\" y=\""+str(start_y-10)+"\" fill=\""+col+"\" font-family=\"Courier\" font-size=\"10\" transform=\"rotate(-45 "+str(x*len_square + start_x + 10)+","+str(start_y-10)+") \">"+tgt[x]+"&nbsp;{:+.1f}".format(aggr_tgt[x])+"</text>"
-        for y in range(len(src)): ### src
-            for x in range(len(tgt)): ### tgt
-                color = align[y][x]
-                if color < 0: color = 1
-                elif color > 10: color = 0
-                else: color = (-color+10)/10
-                color = int(color*256)
-                print "<rect x=\""+str(x*len_square + start_x)+"\" y=\""+str(y*len_square + start_y)+"\" width=\""+str(len_square)+"\" height=\""+str(len_square)+"\" style=\"fill:rgb("+str(color)+","+str(color)+","+str(color)+"); stroke-width:1;stroke:rgb(200,200,200)\" />"
-                txtcolor = "black"
-                if align[y][x] < 0: txtcolor="red"
-                print "<text x=\""+str(x*len_square + start_x)+"\" y=\""+str(y*len_square + start_y + len_square*3/4)+"\" fill=\"{}\" font-family=\"Courier\" font-size=\"5\">".format(txtcolor)+"{:+.1f}".format(align[y][x])+"</text>"
-#+ len_square *1/10
-
-            if aggr_src[y]<0: col="red" ### last column with source words
-            else: col="black"
-#            col="black" ### remove this line if you want divergent colors in red
-            print "<text x=\""+str(len_x*len_square + start_x + separation)+"\" y=\""+str(y*len_square + start_y + len_square*3/4)+"\" fill=\""+col+"\" font-family=\"Courier\" font-size=\"10\">"+src[y]+"&nbsp;{:+.1f}".format(aggr_src[y])+"</text>"
-        print("<br>\n<svg width=\"200\" height=\"20\">")
-        print("<text x=\"{}\" y=\"10\" fill=\"black\" font-family=\"Courier\" font-size=\"8\"\">{:+.4f}</text>".format(start_x,sim))
 
 ###################
 ### session #######
