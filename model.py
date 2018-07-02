@@ -259,7 +259,8 @@ class Model():
                 curr_time = time.strftime("[%Y-%m-%d_%X]", time.localtime())
                 iscore.update()
                 ILOSS = ILOSS/self.config.report_every
-                sys.stdout.write('{} Epoch {} Iteration {}/{} loss:{:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})\n'.format(curr_time,curr_epoch,iter+1,nbatches,ILOSS,iscore.A,iscore.P,iscore.R,iscore.F))
+#                sys.stdout.write('{} Epoch {} Iteration {}/{} loss:{:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})\n'.format(curr_time,curr_epoch,iter+1,nbatches,ILOSS,iscore.A,iscore.P,iscore.R,iscore.F))
+                sys.stdout.write('{} Epoch {} Iteration {}/{} loss:{:.4f})\n'.format(curr_time,curr_epoch,iter+1,nbatches,ILOSS))
                 ILOSS = 0
                 iscore = Score()
 
