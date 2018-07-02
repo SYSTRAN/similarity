@@ -235,8 +235,8 @@ class Model():
         #######################
         nbatches = (len(train) + self.config.batch_size - 1) // self.config.batch_size
         curr_epoch = self.config.last_epoch + 1
-        TLOSS = 0 # training loss
-        ILOSS = 0 # intermediate loss (average over [config.report_every] iterations)
+        TLOSS = 0.0 # training loss
+        ILOSS = 0.0 # intermediate loss (average over [config.report_every] iterations)
         tscore = Score()
         iscore = Score()
         ini_time = time.time()
