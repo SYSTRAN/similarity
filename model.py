@@ -16,10 +16,6 @@ class Score():
         self.TN = 0
         self.FP = 0
         self.FN = 0
-        self.A = 0
-        self.P = 0
-        self.R = 0
-        self.F = 0
 
     def add(self, p, r): ### prediction, reference
         # when r < 0 => positive example, alignment exists (parallel sentence)
@@ -46,11 +42,11 @@ class Score():
             self.add(p[s],r[s])
 
     def update(self):
-        self.A, self.P, self.R, self.F = 0., 0., 0., 0.
-        if (self.TP + self.FP) > 0: self.P = 1. * self.TP / (self.TP + self.FP) #true positives out of all that were predicted positive
-        if (self.TP + self.FN) > 0: self.R = 1. * self.TP / (self.TP + self.FN) #true positives out of all that were actually positive
-        if (self.P + self.R) > 0: self.F = 2. * self.P * self.R / (self.P + self.R)
-        if (self.TP + self.TN + self.FP + self.FN) > 0: self.A = 1.0 * (self.TP + self.TN) / (self.TP + self.TN + self.FP + self.FN)
+        A, P, R, F = 0., 0., 0., 0.
+        if (self.TP + self.FP) > 0: P = 1. * self.TP / (self.TP + self.FP) #true positives out of all that were predicted positive
+        if (self.TP + self.FN) > 0: R = 1. * self.TP / (self.TP + self.FN) #true positives out of all that were actually positive
+        if (P + R) > 0.0: F = 2. * P * R / (P + R)
+        if (self.TP + self.TN + self.FP + self.FN) > 0: A = 1.0 * (self.TP + self.TN) / (self.TP + self.TN + self.FP + self.FN)
 
 class Model():
     def __init__(self, config):
@@ -147,6 +143,7 @@ class Model():
                 lastS_DotDif_lastT = tf.concat([lastS_Dot_lastT, lastS_Dif_lastT], axis=1)
                 self.output = tf.layers.dense(lastS_DotDif_lastT, U, activation=tf.nn.tanh, use_bias=True, kernel_initializer = tf.glorot_uniform_initializer())
                 self.output = tf.layers.dense(lastS_DotDif_lastT, 1, use_bias=True, kernel_initializer = tf.glorot_uniform_initializer())
+                self.output = tf.reshape(self.output,[tf.shape(self.output)[0]])
         ###
         ### alignment (Legrand, Auli, Collobert, 2016) https://arxiv.org/pdf/1606.09560
         ###
