@@ -16,6 +16,10 @@ class Score():
         self.TN = 0
         self.FP = 0
         self.FN = 0
+        self.A = 0.0
+        self.P = 0.0
+        self.R = 0.0
+        self.F = 0.0
 
     def add(self, p, r): ### prediction, reference
         # when r < 0 => positive example, alignment exists (parallel sentence)
@@ -42,11 +46,11 @@ class Score():
             self.add(p[s],r[s])
 
     def update(self):
-        A, P, R, F = 0., 0., 0., 0.
-        if (self.TP + self.FP) > 0: P = 1. * self.TP / (self.TP + self.FP) #true positives out of all that were predicted positive
-        if (self.TP + self.FN) > 0: R = 1. * self.TP / (self.TP + self.FN) #true positives out of all that were actually positive
-        if (P + R) > 0.0: F = 2. * P * R / (P + R)
-        if (self.TP + self.TN + self.FP + self.FN) > 0: A = 1.0 * (self.TP + self.TN) / (self.TP + self.TN + self.FP + self.FN)
+        self.A, self.P, self.R, self.F = 0.0, 0.0, 0.0, 0.0
+        if (self.TP + self.FP) > 0: self.P = 1. * self.TP / (self.TP + self.FP) #true positives out of all that were predicted positive
+        if (self.TP + self.FN) > 0: self.R = 1. * self.TP / (self.TP + self.FN) #true positives out of all that were actually positive
+        if (self.P + self.R) > 0.0: self.F = 2. * self.P * self.R / (self.P + self.R)
+        if (self.TP + self.TN + self.FP + self.FN) > 0: self.A = 1.0 * (self.TP + self.TN) / (self.TP + self.TN + self.FP + self.FN)
 
 class Model():
     def __init__(self, config):
