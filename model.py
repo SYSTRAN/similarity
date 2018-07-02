@@ -180,7 +180,7 @@ class Model():
                 ###sign: +1:divergence, -1:similar
 #                self.loss = tf.reduce_sum(tf.log(1 + tf.exp(self.cos_similarity * self.sign)))
 #                self.sign = tf.where(tf.equal(self.sign,-1.0),self.sign+1.0,self.sign-0.0) ### 0.0 => parallel, 1.0 => divergent
-                self.loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=self.sign, logits=self.output)
+                self.loss = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(labels=self.sign, logits=self.output))
             else:
                 self.loss_src = tf.reduce_mean(tf.map_fn(lambda (x,l): tf.reduce_sum(x[:l]), (self.output_src, self.len_src), dtype=tf.float32))
                 self.loss_tgt = tf.reduce_mean(tf.map_fn(lambda (x,l): tf.reduce_sum(x[:l]), (self.output_tgt, self.len_tgt), dtype=tf.float32))
@@ -259,9 +259,8 @@ class Model():
                 curr_time = time.strftime("[%Y-%m-%d_%X]", time.localtime())
                 iscore.update()
                 ILOSS = ILOSS/self.config.report_every
-#                sys.stdout.write('{} Epoch {} Iteration {}/{} loss:{:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})\n'.format(curr_time,curr_epoch,iter+1,nbatches,ILOSS,iscore.A,iscore.P,iscore.R,iscore.F))
-                print(ILOSS)
-                sys.stdout.write('{} Epoch {} Iteration {}/{} loss:{:.4f}\n'.format(curr_time,curr_epoch,iter+1,nbatches,ILOSS))
+                sys.stdout.write('{} Epoch {} Iteration {}/{} loss:{:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})\n'.format(curr_time,curr_epoch,iter+1,nbatches,ILOSS,iscore.A,iscore.P,iscore.R,iscore.F))
+#                sys.stdout.write('{} Epoch {} Iteration {}/{} loss:{:.4f}\n'.format(curr_time,curr_epoch,iter+1,nbatches,ILOSS))
                 ILOSS = 0.0
                 iscore = Score()
 
