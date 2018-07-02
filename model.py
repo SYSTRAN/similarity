@@ -134,14 +134,21 @@ class Model():
             self.out_tgt = tf.concat([output_fw, output_bw], axis=2)
             self.out_tgt = tf.nn.dropout(self.out_tgt, keep_prob=KEEP)
 
-        ###
-        ### sentence (always computed)
-        ###
-        # next is a tensor containing similarity distances (one for each sentence pair)
-        #sum(a*b for a,b in zip(x,y)) / (square_rooted(x)*square_rooted(y))
+        # next is a tensor containing similarity distances (one for each sentence pair) using the last vectors
         self.cos_similarity = tf.reduce_sum(tf.nn.l2_normalize(self.last_src, dim=1) * tf.nn.l2_normalize(self.last_tgt, dim=1), axis=1) ### +1:similar -1:divergent
         ###
-        ### alignment
+        ### sentence (Grégoire and Langlais, 2017) https://arxiv.org/pdf/1709.09783.pdf
+        ###
+        if self.config.mode == "sentence":
+            U = 256
+            with tf.name_scope("sentence"):
+                lastS_Dif_lastT = tf.abs(tf.subtract(self.last_src, self.last_tgt)) ### absolute element-wise difference
+                lastS_Dot_lastT = self.last_src * self.last_tgt ### element-wise product
+                lastS_DotDif_lastT = tf.concat([lastS_Dot_lastT, lastS_Dif_lastT], axis=1)
+                self.output = tf.layers.dense(lastS_DotDif_lastT, U, activation=tf.nn.tanh, use_bias=True, kernel_initializer = tf.glorot_uniform_initializer())
+                self.output = tf.layers.dense(lastS_DotDif_lastT, 1, use_bias=True, kernel_initializer = tf.glorot_uniform_initializer())
+        ###
+        ### alignment (Legrand, Auli, Collobert, 2016) https://arxiv.org/pdf/1606.09560
         ###
         if self.config.mode == "alignment":
             R = self.config.r
@@ -170,7 +177,9 @@ class Model():
             if self.config.mode == "sentence": 
                 ###cos_similarity: +1:similar, -1:opposite(divergence)
                 ###sign: +1:divergence, -1:similar
-                self.loss = tf.reduce_sum(tf.log(1 + tf.exp(self.cos_similarity * self.sign)))
+#                self.loss = tf.reduce_sum(tf.log(1 + tf.exp(self.cos_similarity * self.sign)))
+#                self.sign = tf.where(tf.equal(self.sign,-1.0),self.sign+1.0,self.sign-0.0) ### 0.0 => parallel, 1.0 => divergent
+                self.loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=self.sign, logits=self.output)
             else:
                 self.loss_src = tf.reduce_mean(tf.map_fn(lambda (x,l): tf.reduce_sum(x[:l]), (self.output_src, self.len_src), dtype=tf.float32))
                 self.loss_tgt = tf.reduce_mean(tf.map_fn(lambda (x,l): tf.reduce_sum(x[:l]), (self.output_tgt, self.len_tgt), dtype=tf.float32))
@@ -218,25 +227,11 @@ class Model():
 ### learning ######
 ###################
 
-    def run_eval(self, tst):
-        nbatches = (len(tst) + self.config.batch_size - 1) // self.config.batch_size
-        # iterate over dataset
-        LOSS = 0
-        score = Score()
-        for iter, (src_batch, tgt_batch, raw_src_batch, raw_tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch) in enumerate(minibatches(tst, self.config.batch_size)):
-            fd = self.get_feed_dict(src_batch, tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch, 0.0)
-            if self.config.mode == "sentence":
-                loss, sim = self.sess.run([self.loss, self.cos_similarity], feed_dict=fd)
-                score.add_batch(sim, sign_batch)
-            else:
-                loss, aggr_src, aggr_tgt = self.sess.run([self.loss, self.aggregation_src, self.aggregation_tgt], feed_dict=fd)
-                score.add_batch_tokens(aggr_src, sign_src_batch, len_src_batch)
-                score.add_batch_tokens(aggr_tgt, sign_tgt_batch, len_tgt_batch)
-            LOSS += loss # append single value which is a mean of losses of the n examples in the batch
-        score.update()
-        return LOSS/nbatches, score
-
     def run_epoch(self, train, dev, lr):
+
+        #######################
+        # learn on trainset ###
+        #######################
         nbatches = (len(train) + self.config.batch_size - 1) // self.config.batch_size
         curr_epoch = self.config.last_epoch + 1
         TLOSS = 0 # training loss
@@ -277,19 +272,37 @@ class Model():
         div_tgt = float(100) * train.ndiv_tgt / train.ntgt
         sys.stdout.write(' Train set: words={}/{} %div={:.2f}/{:.2f} %unk={:.2f}/{:.2f}\n'.format(train.nsrc,train.ntgt,div_src,div_tgt,unk_src,unk_tgt))
 
-        # evaluate over devset
-        if self.config.dev is not None:
-            VLOSS, vscore = self.run_eval(dev)
+        ##########################
+        # evaluate over devset ###
+        ##########################
+        VLOSS = 0.0
+        if dev is not None:
+            nbatches = (len(dev) + self.config.batch_size - 1) // self.config.batch_size
+            # iterate over dataset
+            VLOSS = 0
+            vscore = Score()
+            for iter, (src_batch, tgt_batch, raw_src_batch, raw_tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch) in enumerate(minibatches(dev, self.config.batch_size)):
+                fd = self.get_feed_dict(src_batch, tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch, 0.0)
+                if self.config.mode == "sentence":
+                    loss, sim = self.sess.run([self.loss, self.cos_similarity], feed_dict=fd)
+                    vscore.add_batch(sim, sign_batch)
+                else:
+                    loss, aggr_src, aggr_tgt = self.sess.run([self.loss, self.aggregation_src, self.aggregation_tgt], feed_dict=fd)
+                    vscore.add_batch_tokens(aggr_src, sign_src_batch, len_src_batch)
+                    vscore.add_batch_tokens(aggr_tgt, sign_tgt_batch, len_tgt_batch)
+                VLOSS += loss # append single value which is a mean of losses of the n examples in the batch
+            vscore.update()
+            VLOSS = VLOSS/nbatches
             sys.stdout.write('{} Epoch {} VALID loss={:.4f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})'.format(curr_time,curr_epoch,VLOSS,vscore.A,vscore.P,vscore.R,vscore.F))
             unk_src = float(100) * dev.nunk_src / dev.nsrc
             unk_tgt = float(100) * dev.nunk_tgt / dev.ntgt
             div_src = float(100) * dev.ndiv_src / dev.nsrc
             div_tgt = float(100) * dev.ndiv_tgt / dev.ntgt
             sys.stdout.write(' Valid set words={}/{} %div={:.2f}/{:.2f} %unk={:.2f}/{:.2f}\n'.format(dev.nsrc,dev.ntgt,div_src,div_tgt,unk_src,unk_tgt,VLOSS,vscore.A,vscore.P,vscore.R,vscore.F))
-        else:
-            VLOSS = 0.0
 
-        #keep record of current epoch
+        #################################
+        #keep record of current epoch ###
+        #################################
         self.config.tloss = TLOSS
         self.config.tA = tscore.A
         self.config.tP = tscore.P
@@ -299,7 +312,7 @@ class Model():
         self.config.seconds = "{:.2f}".format(time.time() - ini_time)
         self.config.last_epoch += 1
         self.save_session(self.config.last_epoch)
-        if self.config.dev is not None:
+        if dev is not None:
             self.config.vloss = VLOSS
             self.config.vA = vscore.A
             self.config.vP = vscore.P
