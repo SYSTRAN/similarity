@@ -41,7 +41,7 @@ class Score():
             for w in range(l[s]): ### all words in sentence s (length is l[s])
                 self.add(p[s][w],r[s][w])
 
-    def add_batch(self, p, r):
+    def add_batch(self, p, r): 
         for s in range(len(p)): ### all sentences in batch
             self.add(p[s],r[s])
 
@@ -255,7 +255,7 @@ class Model():
             TLOSS += loss
             ILOSS += loss
 
-            if (iter+1)%self.config.report_every == 0: 
+            if (iter+1)%self.config.report_every == 0:
                 curr_time = time.strftime("[%Y-%m-%d_%X]", time.localtime())
                 iscore.update()
                 ILOSS = ILOSS/self.config.report_every
@@ -358,7 +358,7 @@ class Model():
                     n_sents += 1
                     v = Visualize(n_sents,raw_src_batch[i_sent],raw_tgt_batch[i_sent],sim_batch[i_sent])
                     last_src = []
-                    last_src = []
+                    last_tgt = []
                     if self.config.show_last:
                         last_src = last_src_batch[i_sent]
                         last_tgt = last_tgt_batch[i_sent]
