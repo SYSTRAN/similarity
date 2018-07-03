@@ -25,9 +25,9 @@ class Score():
         # when r < 0 => positive example, alignment exists (parallel sentence)
         # when p > 0 => alignment exists in matrix (similarity is high)
         if p*r <= 0:
-            if p >= 0: 
+            if p >= 0:
                 self.TP += 1 #alignment predicted
-            else: 
+            else:
                 self.TN += 1 #alignment not predicted
         else:
             if p >= 0: 
@@ -46,16 +46,21 @@ class Score():
             #self.add(p[s],r[s])
             p=p[s]
             r=r[s]
+            print("predict={} reference={}".format(p,r))
             if p*r >= 0:
                 if p >= 0: 
                     self.TP += 1 #similar predicted
+                    print("tp")
                 else: 
                     self.TN += 1 #divergent predicted
+                    print("tn")
             else:
                 if p >= 0: 
                     self.FP += 1
+                    print("fp")
                 else: 
                     self.FN += 1
+                    print("fn")
 
 
 
