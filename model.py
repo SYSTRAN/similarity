@@ -44,18 +44,16 @@ class Score():
     def add_batch(self, p, r): 
         for s in range(len(p)): ### all sentences in batch
             #self.add(p[s],r[s])
-            p=p[s]
-            r=r[s]
-            print("predict={} reference={}".format(p,r))
-            if p*r >= 0:
-                if p >= 0: 
+            print("predict={} reference={}".format(p[s],r[s]))
+            if p[s]*r[s] >= 0:
+                if p[s] >= 0: 
                     self.TP += 1 #similar predicted
                     print("tp")
                 else: 
                     self.TN += 1 #divergent predicted
                     print("tn")
             else:
-                if p >= 0: 
+                if p[s] >= 0: 
                     self.FP += 1
                     print("fp")
                 else: 
