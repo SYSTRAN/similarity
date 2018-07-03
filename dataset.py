@@ -219,8 +219,6 @@ def build_batch(SRC, TGT, RAW_SRC, RAW_TGT, SRC_TAG, TGT_TAG, max_src, max_tgt):
         sign_src = SRC_TAG[i]
         sign_tgt = TGT_TAG[i]
         sign = max(max(sign_src),max(sign_tgt)) ### sign is divergent (+1) if there is any divergent word
-        if sign==1.0: sign=0.0 ###divergent 0.0
-        else: sign=1.0 ###parallel 1.0
         while len(sign_src) < max_src: sign_src.append(-1.0) ### continue filling up to max_tgt cells
         while len(sign_tgt) < max_tgt: sign_tgt.append(-1.0) ### continue filling up to max_tgt cells
         src = list(SRC[i])

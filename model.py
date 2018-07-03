@@ -43,22 +43,7 @@ class Score():
 
     def add_batch(self, p, r): 
         for s in range(len(p)): ### all sentences in batch
-            #self.add(p[s],r[s])
-            print("predict={} reference={}".format(p[s],r[s]))
-            if p[s]*r[s] >= 0:
-                if p[s] >= 0: 
-                    self.TP += 1 #similar predicted
-                    print("tp")
-                else: 
-                    self.TN += 1 #divergent predicted
-                    print("tn")
-            else:
-                if p[s] >= 0: 
-                    self.FP += 1
-                    print("fp")
-                else: 
-                    self.FN += 1
-                    print("fn")
+            self.add(p[s],r[s])
 
 
 
@@ -195,9 +180,8 @@ class Model():
             if self.config.mode == "sentence": 
                 ###cos_similarity: +1:similar, -1:opposite(divergence)
                 ###sign: +1:divergence, -1:similar
-#                self.loss = tf.reduce_sum(tf.log(1 + tf.exp(self.cos_similarity * self.sign)))
-#                self.sign = tf.where(tf.equal(self.sign,-1.0),self.sign+1.0,self.sign-0.0) ### 0.0 => parallel, 1.0 => divergent
-                self.loss = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(labels=self.sign, logits=self.output))
+                self.loss = tf.reduce_sum(tf.log(1 + tf.exp(self.output * self.sign)))
+#                self.loss = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(labels=self.sign, logits=self.output))
             else:
                 self.loss_src = tf.reduce_mean(tf.map_fn(lambda (x,l): tf.reduce_sum(x[:l]), (self.output_src, self.len_src), dtype=tf.float32))
                 self.loss_tgt = tf.reduce_mean(tf.map_fn(lambda (x,l): tf.reduce_sum(x[:l]), (self.output_tgt, self.len_tgt), dtype=tf.float32))
@@ -260,9 +244,9 @@ class Model():
         for iter, (src_batch, tgt_batch, raw_src_batch, raw_tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch) in enumerate(minibatches(train, self.config.batch_size)):
             fd = self.get_feed_dict(src_batch, tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch, lr)
             if self.config.mode == "sentence":
-                _, loss, sim = self.sess.run([self.train_op, self.loss, self.cos_similarity], feed_dict=fd)
-                tscore.add_batch(sim,sign_batch)
-                iscore.add_batch(sim,sign_batch)
+                _, loss, out = self.sess.run([self.train_op, self.loss, self.output], feed_dict=fd)
+                tscore.add_batch(out,sign_batch)
+                iscore.add_batch(out,sign_batch)
             else:
                 _, loss, aggr_src, aggr_tgt = self.sess.run([self.train_op, self.loss, self.aggregation_src, self.aggregation_tgt], feed_dict=fd)
                 tscore.add_batch_tokens(aggr_src, sign_src_batch, len_src_batch)
@@ -302,7 +286,7 @@ class Model():
             for iter, (src_batch, tgt_batch, raw_src_batch, raw_tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch) in enumerate(minibatches(dev, self.config.batch_size)):
                 fd = self.get_feed_dict(src_batch, tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch, 0.0)
                 if self.config.mode == "sentence":
-                    loss, sim = self.sess.run([self.loss, self.cos_similarity], feed_dict=fd)
+                    loss, out = self.sess.run([self.loss, self.output], feed_dict=fd)
                     vscore.add_batch(sim, sign_batch)
                 else:
                     loss, aggr_src, aggr_tgt = self.sess.run([self.loss, self.aggregation_src, self.aggregation_tgt], feed_dict=fd)
@@ -369,11 +353,11 @@ class Model():
             fd = self.get_feed_dict(src_batch, tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch, 0.0) 
 
             if self.config.mode == "sentence":
-                sim_batch, last_src_batch, last_tgt_batch = self.sess.run([self.cos_similarity, self.last_src, self.last_tgt], feed_dict=fd)
+                out_batch, last_src_batch, last_tgt_batch = self.sess.run([self.output, self.last_src, self.last_tgt], feed_dict=fd)
                 if tst.annotated: score.add_batch(sim_batch, sign_batch)
                 for i_sent in range(len(sim_batch)):
                     n_sents += 1
-                    v = Visualize(n_sents,raw_src_batch[i_sent],raw_tgt_batch[i_sent],sim_batch[i_sent])
+                    v = Visualize(n_sents,raw_src_batch[i_sent],raw_tgt_batch[i_sent],out_batch[i_sent])
                     last_src = []
                     last_tgt = []
                     if self.config.show_last:
