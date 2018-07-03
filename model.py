@@ -287,7 +287,7 @@ class Model():
                 fd = self.get_feed_dict(src_batch, tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch, 0.0)
                 if self.config.mode == "sentence":
                     loss, out = self.sess.run([self.loss, self.output], feed_dict=fd)
-                    vscore.add_batch(sim, sign_batch)
+                    vscore.add_batch(out, sign_batch)
                 else:
                     loss, aggr_src, aggr_tgt = self.sess.run([self.loss, self.aggregation_src, self.aggregation_tgt], feed_dict=fd)
                     vscore.add_batch_tokens(aggr_src, sign_src_batch, len_src_batch)
@@ -354,7 +354,7 @@ class Model():
 
             if self.config.mode == "sentence":
                 out_batch, last_src_batch, last_tgt_batch = self.sess.run([self.output, self.last_src, self.last_tgt], feed_dict=fd)
-                if tst.annotated: score.add_batch(sim_batch, sign_batch)
+                if tst.annotated: score.add_batch(out_batch, sign_batch)
                 for i_sent in range(len(sim_batch)):
                     n_sents += 1
                     v = Visualize(n_sents,raw_src_batch[i_sent],raw_tgt_batch[i_sent],out_batch[i_sent])
