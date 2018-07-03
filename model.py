@@ -43,7 +43,21 @@ class Score():
 
     def add_batch(self, p, r): 
         for s in range(len(p)): ### all sentences in batch
-            self.add(p[s],r[s])
+            #self.add(p[s],r[s])
+            p=p[s]
+            r=r[s]
+            if p*r >= 0:
+                if p >= 0: 
+                    self.TP += 1 #similar predicted
+                else: 
+                    self.TN += 1 #divergent predicted
+            else:
+                if p >= 0: 
+                    self.FP += 1
+                else: 
+                    self.FN += 1
+
+
 
     def update(self):
         self.A, self.P, self.R, self.F = 0.0, 0.0, 0.0, 0.0
