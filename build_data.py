@@ -496,6 +496,9 @@ def main():
         n_tgt_prune = 0
         for line in f:
             n_total += 1
+            if n_total%100000==0:
+                if n_total%1000000==0: sys.stderr.write(str(n_total))
+                else: sys.stderr.write(".")
             i += 1
             tok = line.strip().split("\t")
             if len(tok)<2:
