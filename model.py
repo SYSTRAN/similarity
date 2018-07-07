@@ -355,7 +355,7 @@ class Model():
             if self.config.mode == "sentence":
                 out_batch, last_src_batch, last_tgt_batch = self.sess.run([self.output, self.last_src, self.last_tgt], feed_dict=fd)
                 if tst.annotated: score.add_batch(out_batch, sign_batch)
-                for i_sent in range(len(sim_batch)):
+                for i_sent in range(len(out_batch)):
                     n_sents += 1
                     v = Visualize(n_sents,raw_src_batch[i_sent],raw_tgt_batch[i_sent],out_batch[i_sent])
                     last_src = []
