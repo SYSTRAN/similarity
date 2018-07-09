@@ -148,8 +148,7 @@ class Model():
                 lastS_Dot_lastT = self.last_src * self.last_tgt ### element-wise product
                 lastS_DotDif_lastT = tf.concat([lastS_Dot_lastT, lastS_Dif_lastT], axis=1)
                 self.output = tf.layers.dense(lastS_DotDif_lastT, U, activation=tf.nn.tanh, use_bias=True, kernel_initializer = tf.glorot_uniform_initializer())
-                self.output = tf.layers.dense(lastS_DotDif_lastT, 1, use_bias=True, kernel_initializer = tf.glorot_uniform_initializer())
-#                self.output = tf.layers.dense(self.output, 1, use_bias=True, kernel_initializer = tf.glorot_uniform_initializer())
+                self.output = tf.layers.dense(self.output, 1, use_bias=True, kernel_initializer = tf.glorot_uniform_initializer())
                 self.output = tf.reshape(self.output,[tf.shape(self.output)[0]])
         ###
         ### alignment (Legrand, Auli, Collobert, 2016) https://arxiv.org/pdf/1606.09560
