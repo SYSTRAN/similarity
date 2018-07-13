@@ -85,7 +85,7 @@ class Fix():
 #                if a.max_s(s_ini,0,len(tgt)-1) < 0: continue
                 for s_end in range(s_ini+min_length-1,len(src)):
 #                    if a.max_s(s_end,0,len(tgt)-1) < 0: continue
-                    if not bounded_by_punctuation(s_ini,s_end,src): continue
+                    if not self.bounded_by_punctuation(s_ini,s_end,src): continue
                     for t_ini in range(0,len(tgt)):
 #                        if a.max_t(t_ini,s_ini,s_end) < 0: continue
                         for t_end in range(t_ini+min_length-1,len(tgt)):
@@ -114,8 +114,8 @@ class Fix():
 
     def bounded_by_punctuation(self,ini,end,vec):
         if not self.use_punct: return True
-        if ini > 0 and vec[ini-1] not in ini_punct: return False
-        if end < len(vec)-1 and vec[end+1] not in end_punct: return False
+        if ini > 0 and vec[ini-1] not in self.ini_punct: return False
+        if end < len(vec) and vec[end] not in self.end_punct: return False
         return True
 
 def main():
