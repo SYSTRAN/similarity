@@ -62,6 +62,10 @@ class Fix():
         self.max_sim = max_sim #only hypotheses with a similarity score lower than max_sim are considered to be fixed
         self.inside = True
         self.outside = False
+        self.use_punct = True
+        self.ini_punct = {'.', ',', ';', ')', '(' ']', '[', '?', '!', "\'", '\"', '-'}
+        self.end_punct = {'.', ',', ';', ')', '(' ']', '[', '?', '!', "\'", '\"', '-'}
+
 
     def print_fix_square(self, src, tgt, align, sim, n_sents):
         a = Align(align)
@@ -81,9 +85,11 @@ class Fix():
 #                if a.max_s(s_ini,0,len(tgt)-1) < 0: continue
                 for s_end in range(s_ini+min_length-1,len(src)):
 #                    if a.max_s(s_end,0,len(tgt)-1) < 0: continue
+                    if not bounded_by_punctuation(s_ini,s_end,src): continue
                     for t_ini in range(0,len(tgt)):
 #                        if a.max_t(t_ini,s_ini,s_end) < 0: continue
                         for t_end in range(t_ini+min_length-1,len(tgt)):
+                            if not self.bounded_by_punctuation(t_ini,t_end,tgt): continue
 #                            if a.max_t(t_end,s_ini,s_end) < 0: continue
 #                            if a.max_s(s_ini,t_ini,t_end) < 0: continue
 #                            if a.max_s(s_end,t_ini,t_end) < 0: continue
@@ -105,6 +111,12 @@ class Fix():
                 print("{}\t{:.4f}\t{:.4f}\t{}".format(n_sents,sim,cost[pair],pair))
                 n += 1
                 if n >= self.nbest: break
+
+    def bounded_by_punctuation(self,ini,end,vec):
+        if not self.use_punct: return True
+        if ini > 0 and vec[ini-1] not in ini_punct: return False
+        if end < len(vec)-1 and vec[end+1] not in end_punct: return False
+        return True
 
 def main():
 
