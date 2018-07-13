@@ -57,14 +57,14 @@ class Align():
         return c
 
 class Fix():
-    def __init__(self,tau,nbest,max_sim):
+    def __init__(self,tau,nbest,use_punct,max_sim):
         self.tau = tau #hypotheses must be at least sized of tau
         self.nbest = nbest
         self.max_sim = max_sim #only hypotheses with a similarity score lower than max_sim are considered to be fixed
+        self.use_punct = use_punct
         self.inside = True
         self.outside = False
-        self.use_punct = True
-#        self.ini_punct = {'.', ',', ';', ')', '(' ']', '[', '?', '!', "\'", '\"', '-'}
+#        self.punctuation = {'.', ',', ';', ')', '(' ']', '[', '?', '!', "\'", '\"', '-'}
 #        self.end_punct = {'.', ',', ';', ')', '(' ']', '[', '?', '!', "\'", '\"', '-'}
 
 
@@ -83,17 +83,11 @@ class Fix():
         if sim <= self.max_sim:
             n_times = 0
             for s_ini in range(0,len(src)):
-#                if a.max_s(s_ini,0,len(tgt)-1) < 0: continue
                 for s_end in range(s_ini+min_length-1,len(src)):
-#                    if a.max_s(s_end,0,len(tgt)-1) < 0: continue
                     if not self.bounded_by_punctuation(s_ini,s_end,src): continue
                     for t_ini in range(0,len(tgt)):
-#                        if a.max_t(t_ini,s_ini,s_end) < 0: continue
                         for t_end in range(t_ini+min_length-1,len(tgt)):
                             if not self.bounded_by_punctuation(t_ini,t_end,tgt): continue
-#                            if a.max_t(t_end,s_ini,s_end) < 0: continue
-#                            if a.max_s(s_ini,t_ini,t_end) < 0: continue
-#                            if a.max_s(s_end,t_ini,t_end) < 0: continue
                             c = 0.0
                             if self.inside:  c += a.cost_square_max_inside(s_ini,s_end,t_ini,t_end) 
                             if self.outside: c += a.cost_square_max_outside(s_ini,s_end,t_ini,t_end)
@@ -125,12 +119,14 @@ def main():
     nbest = 15
     max_sim = 0.1
     ratio=3
+    use_punct = False
     name = sys.argv.pop(0)
-    usage = "usage: " + name + " [-tau INT] [-nbest INT] [-max_sim FLOAT]\n"
+    usage = "usage: " + name + " [-tau INT] [-nbest INT] [-max_sim FLOAT] [-use_punct]\n"
     while len(sys.argv):
         tok = sys.argv.pop(0)
-        if   (tok=="-tau" and len(sys.argv)):     tau = int(sys.argv.pop(0))
-        elif (tok=="-nbest" and len(sys.argv)):   nbest = int(sys.argv.pop(0))
+        if   (tok=="-tau" and len(sys.argv)): tau = int(sys.argv.pop(0))
+        elif (tok=="-nbest" and len(sys.argv)): nbest = int(sys.argv.pop(0))
+        elif (tok=="-use_punct"): use_punct = True
         elif (tok=="-max_sim" and len(sys.argv)): max_sim = float(sys.argv.pop(0))
         elif (tok=="-h"):
             sys.stderr.write("{}".format(usage))
@@ -140,7 +136,7 @@ def main():
             sys.stderr.write("{}".format(usage))
             sys.exit()
 
-    fix = Fix(tau,nbest,max_sim)
+    fix = Fix(tau,nbest,use_punct,max_sim)
     n_sent = 0
     for line in sys.stdin:
         n_sent += 1
