@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import tensorflow as tf
 import numpy as np
+import string
 import math
 import sys
 import os
@@ -63,8 +64,8 @@ class Fix():
         self.inside = True
         self.outside = False
         self.use_punct = True
-        self.ini_punct = {'.', ',', ';', ')', '(' ']', '[', '?', '!', "\'", '\"', '-'}
-        self.end_punct = {'.', ',', ';', ')', '(' ']', '[', '?', '!', "\'", '\"', '-'}
+#        self.ini_punct = {'.', ',', ';', ')', '(' ']', '[', '?', '!', "\'", '\"', '-'}
+#        self.end_punct = {'.', ',', ';', ')', '(' ']', '[', '?', '!', "\'", '\"', '-'}
 
 
     def print_fix_square(self, src, tgt, align, sim, n_sents):
@@ -114,8 +115,8 @@ class Fix():
 
     def bounded_by_punctuation(self,ini,end,vec):
         if not self.use_punct: return True
-        if ini > 0 and vec[ini-1] not in self.ini_punct: return False
-        if end < len(vec) and vec[end] not in self.end_punct: return False
+        if ini > 0 and vec[ini-1] not in string.punctuation: return False ### previous to ini is punctuation
+        if vec[end] not in string.punctuation: return False ### end is punctuation
         return True
 
 def main():
