@@ -10,9 +10,9 @@ The next picture, shows an example of similarity classification for the sentence
 <img src="https://github.com/jmcrego/similarity/blob/master/divergence_example.png" width="250" />
 
 As it can be seen, the model outputs:
-* an overall sentence similarity score (0.1201),
+* a matrix with alignment scores (for each pair of words),
 * aggregation scores at the level of words (shown next to words) and
-* alignment scores for each pair of words.
+* an overall sentence similarity score (+0.1201),
 
 # Learning
 ```
