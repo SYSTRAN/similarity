@@ -16,6 +16,8 @@ As it can be seen, the model outputs:
 
 In the previous paper we show that divergent sentences can be filtered out (using the overal similarity score) and that some divergences can be fixed (following alignment scores), guiding in both cases to outperform accuracy when compared to using the original corpora to learn a neural MT system. For our experiments we used the English-French [OpenSubtitles](http://www.lrec-conf.org/proceedings/lrec2016/pdf/947_Paper.pdf) and the English-German [Paracrawl](http://paracrawl.eu/) corpora.
 
+# Preprocess
+
 # Learning
 ```
 python ./divergence_tagger.py -mdir DIR \
@@ -44,3 +46,6 @@ python ./divergence_tagger.py -model FILE \
                               -lstm_size 64 \
                               -evaluate
 ```
+
+# Visualize
+
