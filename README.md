@@ -22,7 +22,7 @@ In order to learn our similarity model we better preprocess our training data wi
 
 ## Vocabularies
 
-After tokenisation, the most frequent |Vs| source words and |Vt| target words are considered to be part of the Vs and Vt vocabularies.
+After tokenisation, the most frequent |Vs| source and |Vt| target words are considered to be part of the source and target vocabularies respectively. The remaining will be mapped to a special UNK token. In our experiments we used |Vs| = |Vt| = 50,000 words.
 
 ## Pre-trained word embeddings
 
