@@ -11,7 +11,7 @@ The next picture, shows an example of similarity classification for the sentence
 
 As it can be seen, the model outputs:
 * a matrix with alignment scores (for each pair of words),
-* aggregation scores at the level of words (shown next to words) and
+* aggregation scores at the level of source/target words (shown next to words) and
 * an overall sentence similarity score (+0.1201),
 
 # Learning
