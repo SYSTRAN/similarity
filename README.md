@@ -1,7 +1,9 @@
 # similarity
 Bilingual sentence similarity classifier based on optimising word alignments using Tensorflow.
 
-This repo implements a sentence similarity classifier model using Tensorflow. Similarity classification is based on the ideas introduced by [Carpuat et al., 2017](http://aclweb.org/anthology/W17-3209) and similar to [Vyas et al., 2018](http://aclweb.org/anthology/N18-1136), [Schwenk, 2018](http://aclweb.org/anthology/P18-2037) and [Grégoire et al., 2018](http://www.aclweb.org/anthology/C18-1122). The code borrows many of the concepts and architecture presented in [Legrand et al., 2016](http://www.aclweb.org/anthology/W16-2207). Further details obout the current implementation and experiments are published in [Fixing Translation Divergences in Parallel Corpora for Neural MT]() at EMNLP'2018.
+This repo implements a sentence similarity classifier model using Tensorflow. Similarity classification is based on the ideas introduced by [Carpuat et al., 2017](http://aclweb.org/anthology/W17-3209) and similar to [Vyas et al., 2018](http://aclweb.org/anthology/N18-1136), [Schwenk, 2018](http://aclweb.org/anthology/P18-2037) and [Grégoire et al., 2018](http://www.aclweb.org/anthology/C18-1122). The code borrows many of the concepts and architecture presented in [Legrand et al., 2016](http://www.aclweb.org/anthology/W16-2207). 
+
+Details on the implementation and experiments are published in [Fixing Translation Divergences in Parallel Corpora for Neural MT]() at EMNLP'2018.
 
 The next picture, shows an example of similarity classification for the sentence pair:
 
