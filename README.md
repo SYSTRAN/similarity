@@ -7,7 +7,7 @@ The next picture, shows an example of similarity classification for the sentence
 
 ``` What do you feel ? Not . ||| Que ressentez-vous ?```
 
-<img src="https://github.com/jmcrego/similarity/blob/master/divergence_example.png" width="250" />
+<img src="https://github.com/jmcrego/similarity/blob/master/divergence_example.png" width="200" />
 
 As it can be seen, the model outputs:
 * a matrix with alignment scores (for each pair of words),
