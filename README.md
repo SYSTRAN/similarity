@@ -18,9 +18,15 @@ In the previous paper we show that divergent sentences can be filtered out (usin
 
 # Preprocess
 
+## Vocabularies
+
+## Pre-trained word embeddings
+
+Note that word embeddings are not needed to learn the similarity model.
+
 ## Word alignments and Part-of-Speeches
 
-Note that to generate some training examples we will need to perform word alignments and POS-tagging of the input sentences. In our experiments we used [fast\_align](https://github.com/clab/fast_align) and [Freeling](https://github.com/TALP-UPC/FreeLing.git) to perform word alignment and English POS tagging respectively.
+To generate some training examples we will need to perform word alignments and POS-tagging of the input sentences. In our experiments we used [fast\_align](https://github.com/clab/fast_align) and [Freeling](https://github.com/TALP-UPC/FreeLing.git) to perform word alignment and English POS tagging respectively. Note that neither word alignments nor POS tags are needed to learn the similarity model.
 
 # Learning
 ```
