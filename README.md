@@ -18,7 +18,11 @@ In the previous paper we show that divergent sentences can be filtered out (usin
 
 # Preprocess
 
+In order to learn our similarity model we better preprocess our training data with any tokenization toolkit, basically aiming at reducing the vocabulary size. In our experiments we used the default tokenization scheme implemented in [OpenNMT](http://opennmt.net) performing minimal tokenization. Any subtokenization toolkit (such as BPE) can also be used.
+
 ## Vocabularies
+
+After tokenisation, the most frequent |Vs| source words and |Vt| target words are considered to be part of the Vs and Vt vocabularies.
 
 ## Pre-trained word embeddings
 
