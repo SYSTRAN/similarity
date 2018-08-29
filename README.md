@@ -5,6 +5,6 @@ This repo implements a sentence similarity classifier model using Tensorflow. Si
 
 The next picture, shows an example of similarity classification for a parallel sentence pair:
 
-``` Hi , Maggie . Have you heard anything ? ||| As-tu entendu quelque chose ?```
+``` What do you feel ? Not . ||| Que ressentez-vous ?```
 
 <img src="https://github.com/jmcrego/similarity/blob/master/divergence_example.png" width="250" />
