@@ -18,7 +18,7 @@ In the previous paper we show that divergent sentences can be filtered out (usin
 
 # Preprocess
 
-## Word alignment and Part-of-Speeche tags
+## Word alignments and Part-of-Speeches
 
 Note that to generate some training examples we will need to perform word alignments and POS-tagging of the input sentences. In our experiments we used [fast_align](https://github.com/clab/fast align) to perform word alignment of our corpora and [Freeling](https://github.com/TALP-UPC/FreeLing.git) to obtain English POS tags.
 
