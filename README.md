@@ -7,4 +7,4 @@ The next picture, shows an example of similarity classification for a parallel s
 
 ``` Hi , Maggie . Have you heard anything ? ||| As-tu entendu quelque chose ?```
 
-<img src="https://github.com/jmcrego/divergence/blob/master/pics/divergence_example.png" width="250" />
+<img src="https://github.com/jmcrego/similarity/blob/master/divergence_example.png" width="250" />
