@@ -29,7 +29,7 @@ After tokenisation, the most frequent |Vs| source and |Vt| target words are cons
 
 ## Pre-trained word embeddings
 
-Note that word embeddings are not needed to learn the similarity model.
+Any initialisation of source and target word embeddings can be used. In our experiments we initialised both source and target embeddings using [fastText](https://github.com/facebookresearch/fastText) with |Es| = |Et| = 256 cells. Embeddings were further refined using [MUSE](https://github.com/facebookresearch/MUSE). Note that word embeddings are not needed to learn the similarity model.
 
 ## Word alignments and Part-of-Speeches
 
