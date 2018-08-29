@@ -14,7 +14,7 @@ As it can be seen, the model outputs:
 * aggregation scores at the level of source/target words (shown next to words) and
 * an overall sentence similarity score (+0.1201),
 
-In the previous paper we show that divergent sentences can be filtered out using the overal similarity score and that some divergent pairs can be fixed, guiding in both cases to obtain higher translation accuracy that when using the original corpora (English-French [OpenSubtitles](http://www.lrec-conf.org/proceedings/lrec2016/pdf/947_Paper.pdf) and English-German [Paracrawl](http://paracrawl.eu/)).
+In the previous paper we show that divergent sentences can be filtered out using the overal similarity score and that some divergences can be fixed, guiding in both cases to outperform translation accuracy when compared to using the original corpora (English-French [OpenSubtitles](http://www.lrec-conf.org/proceedings/lrec2016/pdf/947_Paper.pdf) and English-German [Paracrawl](http://paracrawl.eu/)).
 
 # Learning
 ```
