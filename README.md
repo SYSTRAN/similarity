@@ -70,5 +70,7 @@ python ./divergence_tagger.py -model FILE \
                               -evaluate
 ```
 
+# Fixing sentence pairs
+
 # Visualize
 
