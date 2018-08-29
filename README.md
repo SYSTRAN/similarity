@@ -20,6 +20,8 @@ In the previous paper we show that divergent sentences can be filtered out (usin
 
 ## Alignment
 
+## Part-of-Speeches
+
 # Learning
 ```
 python ./divergence_tagger.py -mdir DIR \
