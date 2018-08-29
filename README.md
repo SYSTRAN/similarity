@@ -21,7 +21,7 @@ In the previous paper we show that divergent sentences can be filtered out (usin
 
 # Preprocess
 
-In order to learn our similarity model we better preprocess our training data with any tokenization toolkit, basically aiming at reducing the vocabulary size. Any subtokenization toolkit (such as BPE) can also be used. In our experiments we used the default tokenization scheme implemented in [OpenNMT](http://opennmt.net) performing minimal tokenization without subtokenization.
+In order to learn our similarity model we better preprocess our training data with any tokenisation toolkit, basically aiming at reducing the vocabulary size. Any subtokenisation toolkit (such as BPE) can also be used. In our experiments we used the default tokenisation scheme implemented in [OpenNMT](http://opennmt.net) performing minimal tokenisation without subtokenisation.
 
 ## Vocabularies
 
@@ -33,7 +33,7 @@ Note that word embeddings are not needed to learn the similarity model.
 
 ## Word alignments and Part-of-Speeches
 
-To generate some training examples we will need to perform word alignments and POS-tagging of the input sentences. In our experiments we used [fast\_align](https://github.com/clab/fast_align) and [Freeling](https://github.com/TALP-UPC/FreeLing.git) to perform word alignment and English POS tagging respectively. Note that neither word alignments nor POS tags are needed to learn the similarity model.
+To generate some training examples we will need to perform word alignments and POS-tagging of the source sentences. In our experiments we used [fast\_align](https://github.com/clab/fast_align) and [Freeling](https://github.com/TALP-UPC/FreeLing.git) to perform word alignment and English POS tagging respectively. Note that neither word alignments nor POS tags are needed to learn the similarity model.
 
 Once the training parallel corpora is preprocessed we are ready to prepare our training examples:
 
