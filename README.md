@@ -18,6 +18,8 @@ In the previous paper we show that divergent sentences can be filtered out (usin
 
 # Preprocess
 
+## Alignment
+
 # Learning
 ```
 python ./divergence_tagger.py -mdir DIR \
