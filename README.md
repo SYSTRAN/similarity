@@ -8,3 +8,32 @@ The next picture, shows an example of similarity classification for a parallel s
 ``` What do you feel ? Not . ||| Que ressentez-vous ?```
 
 <img src="https://github.com/jmcrego/similarity/blob/master/divergence_example.png" width="250" />
+
+# Learning
+```
+python ./divergence_tagger.py -mdir DIR \
+                              -dev FILE \
+                              -trn FILE \
+                              -wrd_dict FILE \
+                              -tag_dict FILE \
+                              -emb_size 100 \
+                              -seq_size 100 \
+                              -lstm_size 64 \
+                              -batch_size 4 \
+                              -lr_method sgd \
+                              -lr 1.0 \
+                              -lr_decay 0.8 \
+                              -dropout 0.3 \
+                              -n_epochs 15
+```
+# Inference
+```
+python ./divergence_tagger.py -model FILE \
+                              -tst FILE \
+                              -wrd_dict FILE \
+                              -tag_dict FILE \
+                              -emb_size 100 \
+                              -seq_size 100 \
+                              -lstm_size 64 \
+                              -evaluate
+```
