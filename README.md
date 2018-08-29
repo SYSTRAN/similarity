@@ -14,7 +14,7 @@ The next picture, shows an example of similarity classification for the sentence
 
 As it can be seen, the model outputs:
 * a matrix with alignment scores,
-* aggregation scores (shown next to each source/target word) and
+* word aggregation scores (shown next to each source/target word) and
 * an overall sentence similarity score (+0.1201).
 
 In the previous paper we show that divergent sentences can be filtered out (using the overal similarity score) and that some divergences can be fixed (following alignment scores), guiding in both cases to outperform accuracy when compared to using the original corpora to learn a neural MT system. For our experiments we used the English-French [OpenSubtitles](http://www.lrec-conf.org/proceedings/lrec2016/pdf/947_Paper.pdf) and the English-German [Paracrawl](http://paracrawl.eu/) corpora.
@@ -38,7 +38,9 @@ To generate some training examples we will need to perform word alignments and P
 Once the training parallel corpora is preprocessed we are ready to prepare our training examples:
 
 ```
-python ./build_data.py
+python ./build_data.py -data FILE \
+                       -mode purid \
+                       -replace FILE
 ```
 
 # Learning
