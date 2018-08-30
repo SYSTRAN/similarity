@@ -67,7 +67,7 @@ Available modes:
 
  (needs word alignments in input FILE)
 
-* 'r': replace sequences with equivalent part-of-speech
+* 'r': replace sequence with equivalent part-of-speech
  <pre>Where wait for the Euro ?  Pourquoi attendre l ' Euro ?  1.0 -1.0 -1.0 -1.0 -1.0 -1.0  1.0 -1.0 -1.0 -1.0 -1.0 -1.0</pre>
 
  (needs word alignments and source POS-tags in -data FILE and equivalent sequences in -replace FILE)
