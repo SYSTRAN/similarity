@@ -44,7 +44,7 @@ python ./build_data.py -data FILE \
 ```
 The input data file contains one sentence pair per line, with the next fields separated by TABs:
 * source sentence
- :point_right: Ex: Why wait for the Euro ?
+ :point_right: Why wait for the Euro ?
 
 * target sentence
  :point_right: Pourquoi attendre l ' Euro ?
@@ -59,24 +59,23 @@ The input data file contains one sentence pair per line, with the next fields se
 
 Available modes:
 * 'p': Parallel sentences
-
  :point_right: Why wait for the Euro ?   **Pourquoi attendre l ' Euro ?**   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   **-1.0 -1.0 -1.0 -1.0 -1.0 -1.0**
 
 * 'u': uneven sentences
-
  :point_right: Why wait for the Euro ?   **Cela peut donc se produire .**   1.0 1.0 1.0 1.0 1.0 1.0   **1.0 1.0 1.0 1.0 1.0 1.0**
 
 * 'i': insert sentence
-
  :point_right: Why wait for the Euro ?   **Pourquoi attendre l ' Euro ? Il existe un précédant .**   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   **-1.0 -1.0 -1.0 -1.0 -1.0 -1.0 1.0 1.0 1.0 1.0 1.0**
 
-* 'd': delete sequence (needs word alignments in input FILE)
-
+* 'd': delete sequence
  :point_right: Why wait for the Euro ?   **l ' Euro ?**   1.0 1.0 1.0 -1.0 -1.0 -1.0   **-1.0 -1.0 -1.0 -1.0**
 
-* 'r': replace sequences with equivalent part-of-speech (needs word alignments and source POS-tags in -data FILE and equivalent sequences in -replace FILE)
+ (needs word alignments in input FILE)
 
+* 'r': replace sequences with equivalent part-of-speech
  :point_right: Where wait for the Euro ?   **Pourquoi attendre l ' Euro ?**   1.0 -1.0 -1.0 -1.0 -1.0 -1.0   **1.0 -1.0 -1.0 -1.0 -1.0 -1.0**
+
+ (needs word alignments and source POS-tags in -data FILE and equivalent sequences in -replace FILE)
 
 # Learning
 ```
