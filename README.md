@@ -39,7 +39,7 @@ Once the training parallel corpora is preprocessed we are ready to prepare our t
 
 ```
 python build_data.py -data FILE \
-                     -mode STRING \
+                     -mode TYPE \
                      -replace FILE
 ```
 The input data file contains one sentence pair per line, with the next fields separated by TABs:
@@ -74,31 +74,57 @@ Available modes:
 
 # Learning
 ```
-python similarity.py -mdir DIR \
-       		     -dev FILE \
-		     -trn FILE 
-		     -mode STRING \
-		     -max_sents INT \
-		     -src_voc FILE \
-		     -tgt_voc FILE \
-		     -src_emb FILE \
-		     -tgt_emb FILE \
-		     -batch_size INT \
-		     -n_epochs INT \
-		     -seq_size INT \
-		     -lr_method STRING \
-		     -lr FLOAT \
-		     -lr_decay STRING \
-		     -dropout FLOAT \
-		     -aggr STRING \
-		     -src_lstm_size INT \
-		     -tgt_lstm_size INT
+python similarity.py
+*  -mdir          FILE : directory to save/restore models
+
+   -seq_size       INT : sentences larger than this number of src/tgt words are filtered out [50]
+   -batch_size     INT : number of examples per batch [32]
+   -seed           INT : seed for randomness [1234]
+   -debug              : debug mode
+   -h                  : this message
+
+ [LEARNING OPTIONS]
+*  -trn           FILE : training data
+   -dev           FILE : validation data
+
+   -src_voc       FILE : vocabulary of src words (needed to initialize learning)
+   -tgt_voc       FILE : vocabulary of tgt words (needed to initialize learning)
+   -src_emb       FILE : embeddings of src words (needed to initialize learning)
+   -tgt_emb       FILE : embeddings of tgt words (needed to initialize learning)
+
+   -src_lstm_size  INT : hidden units for src bi-lstm [256]
+   -tgt_lstm_size  INT : hidden units for tgt bi-lstm [256]
+
+   -lr           FLOAT : initial learning rate [1.0]
+   -lr_decay     FLOAT : learning rate decay [0.9]
+   -lr_method   STRING : GD method either: adam, adagrad, adadelta, sgd, rmsprop [adagrad]
+   -aggr          TYPE : aggregation operation: sum, max, lse [lse]
+   -r            FLOAT : r for lse [1.0]
+   -dropout      FLOAT : dropout ratio [0.3]
+   -mode        STRING : mode (alignment, sentence) [alignment]
+   -max_sents      INT : Consider this number of sentences per batch (0 for all) [0]
+   -n_epochs       INT : train for this number of epochs [1]
+   -report_every   INT : report every this many batches [1000]
 ```
 # Inference
 ```
-python -u similarity.py -mdir DIR \
-       	  		-epoch INT \
-			-tst FILE
+python -u similarity.py
+*  -mdir          FILE : directory to save/restore models
+
+   -seq_size       INT : sentences larger than this number of src/tgt words are filtered out [50]
+   -batch_size     INT : number of examples per batch [32]
+   -seed           INT : seed for randomness [1234]
+   -debug              : debug mode
+   -h                  : this message
+
+ [INFERENCE OPTIONS]
+*  -epoch          INT : epoch to use ([mdir]/epoch[epoch] must exist)
+*  -tst           FILE : testing data
+   -show_matrix        : output formatted alignment matrix (mode must be alignment)
+   -show_svg           : output alignment matrix using svg-like html format (mode must be alignment)
+   -show_align         : output source/target alignment matrix (mode must be alignment)
+   -show_last          : output source/target last vectors
+   -show_aggr          : output source/target aggr vectors
 ```
 
 ## Visualize
