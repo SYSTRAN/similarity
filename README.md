@@ -83,7 +83,7 @@ Available modes:
 
 * 'r': replace sequence with equivalent part-of-speech
  <pre>Where wait for the Euro ?  Pourquoi attendre l ' Euro ?  1.0 -1.0 -1.0 -1.0 -1.0 -1.0  1.0 -1.0 -1.0 -1.0 -1.0 -1.0</pre>
- The sequence 'Why' of the original source sentence has been replaced by 'Where' with same POS tags.
+ The sequence 'Why' of the original source sentence has been replaced by 'Where' having the same POS tags.
 
  (needs word alignments and source POS-tags in -data FILE and equivalent sequences in -replace FILE)
 
