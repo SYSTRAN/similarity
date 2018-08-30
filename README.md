@@ -42,12 +42,19 @@ python ./build_data.py -data FILE \
                        -mode STRING \
                        -replace FILE
 ```
+The input data file contains one sentence pair per line, with the next fields separated by TABs:
+* source sentence (Ex: Why wait for the Euro ?)
+* target sentence (Ex: Pourquoi attendre l ' Euro ?)
+* source/target alignments (Ex: 0-0 1-1 2-1 3-2 4-3 4-4 5-5)
+* source part-of-speeches (Ex: WRB NNP IN DT NNP SYM)
+(The last two fields are optional)
+
 Available modes:
 * 'p': Parallel sentences
 * 'u': uneven sentences
-* 'r': replace sequences with equivalent part-of-speech (needs word alignments and source POS-tags in input FILE and replace FILE)
-* 'i': insert new sentence
+* 'i': insert sentence
 * 'd': delete sequence (needs word alignments in input FILE)
+* 'r': replace sequences with equivalent part-of-speech (needs word alignments and source POS-tags in -data FILE and equivalent sequences in -replace FILE)
 
 # Learning
 ```
