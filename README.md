@@ -8,7 +8,7 @@ Details on the implementation and experiments are published in:
 
 The next picture, shows an example of similarity classification for the sentence pair:
 
-``` What do you feel ? Not . ||| Que ressentez-vous ?```
+```What do you feel ? Not . ||| Que ressentez-vous ?```
 
 <img src="https://github.com/jmcrego/similarity/blob/master/divergence_example.png" width="200" />
 
@@ -48,7 +48,7 @@ The input data file contains one sentence pair per line, with the next fields se
 * source/target alignments
 * source part-of-speeches
 
- <pre>Why wait for the Euro ?  Pourquoi attendre l ' Euro ?  0-0 1-1 2-1 3-2 4-3 4-4 5-5  WRB NNP IN DT NNP SYM</pre>
+ ```Why wait for the Euro ?  Pourquoi attendre l ' Euro ?  0-0 1-1 2-1 3-2 4-3 4-4 5-5  WRB NNP IN DT NNP SYM```
 
 (The last two fields are optional)
 
