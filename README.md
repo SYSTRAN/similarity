@@ -38,9 +38,9 @@ To generate some training examples we will need to perform word alignments and P
 Once the training parallel corpora is preprocessed we are ready to prepare our training examples:
 
 ```
-python ./build_data.py -data FILE \
-                       -mode STRING \
-                       -replace FILE
+python build_data.py -data FILE \
+                     -mode STRING \
+                     -replace FILE
 ```
 The input data file contains one sentence pair per line, with the next fields separated by TABs:
 * source sentence
@@ -74,25 +74,25 @@ Available modes:
 
 # Learning
 ```
-python ./similarity.py -mdir DIR \
-       		       -dev FILE \
-		       -trn FILE 
-		       -mode STRING \
-		       -max_sents INT \
-		       -src_voc FILE \
-		       -tgt_voc FILE \
-		       -src_emb FILE \
-		       -tgt_emb FILE \
-		       -batch_size INT \
-		       -n_epochs INT \
-		       -seq_size INT \
-		       -lr_method STRING \
-		       -lr FLOAT \
-		       -lr_decay STRING \
-		       -dropout FLOAT \
-		       -aggr STRING \
-		       -src_lstm_size INT \
-		       -tgt_lstm_size INT
+python similarity.py -mdir DIR \
+       		     -dev FILE \
+		     -trn FILE 
+		     -mode STRING \
+		     -max_sents INT \
+		     -src_voc FILE \
+		     -tgt_voc FILE \
+		     -src_emb FILE \
+		     -tgt_emb FILE \
+		     -batch_size INT \
+		     -n_epochs INT \
+		     -seq_size INT \
+		     -lr_method STRING \
+		     -lr FLOAT \
+		     -lr_decay STRING \
+		     -dropout FLOAT \
+		     -aggr STRING \
+		     -src_lstm_size INT \
+		     -tgt_lstm_size INT
 ```
 # Inference
 ```
