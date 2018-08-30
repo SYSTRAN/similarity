@@ -17,7 +17,7 @@ As it can be seen, the model outputs:
 * word aggregation scores (shown next to each source/target word) and
 * an overall sentence pair similarity score (+0.1201).
 
-In the previous paper we show that divergent sentences can be filtered out (using the overal similarity score) and that some divergences can be fixed (following alignment scores), guiding in both cases to outperform accuracy when compared to using the original corpora to learn a neural MT system. For our experiments we used the English-French [OpenSubtitles](http://www.lrec-conf.org/proceedings/lrec2016/pdf/947_Paper.pdf) and the English-German [Paracrawl](http://paracrawl.eu/) corpora.
+In the previous paper we show that divergent sentences can be filtered out (using the sentence similarity score) and that some divergences can be fixed (following alignment scores), guiding in both cases to outperform accuracy when compared to neural MT systems using the original corpora. For our experiments we used the English-French [OpenSubtitles](http://www.lrec-conf.org/proceedings/lrec2016/pdf/947_Paper.pdf) and the English-German [Paracrawl](http://paracrawl.eu/) corpora.
 
 # Preprocess
 
@@ -42,10 +42,16 @@ python ./build_data.py -data FILE \
                        -mode purid \
                        -replace FILE
 ```
+Data modes:
+* p: Parallel sentences
+* u: uneven sentences
+* r: replace 
+* i: insert
+* d: delete
 
 # Learning
 ```
-python ./divergence_tagger.py -mdir DIR \
+python ./divergence_tagger.py -mdir DIR -dev FILE -trn FILE -data_mode $DATAMODE -net_mode $NETMODE -max_sents 1000000 -src_voc $REMOTEDIR/$sdic -tgt_voc $REMOTEDIR/$tdic -src_emb $REMOTEDIR/$semb -tgt_emb $REMOTEDIR/$temb -batch_size $BATCH -n_epochs $NEPOCHS -seq_size $SEQ -lr_method $METHOD -lr $LR -lr_decay $DECAY -dropout $DROP -aggr $AGGR -src_lstm_size $LSTM -tgt_lstm_size $LSTM
                               -dev FILE \
                               -trn FILE \
                               -wrd_dict FILE \
@@ -62,17 +68,13 @@ python ./divergence_tagger.py -mdir DIR \
 ```
 # Inference
 ```
-python ./divergence_tagger.py -model FILE \
-                              -tst FILE \
-                              -wrd_dict FILE \
-                              -tag_dict FILE \
-                              -emb_size 100 \
-                              -seq_size 100 \
-                              -lstm_size 64 \
-                              -evaluate
+python -u similarity.py -mdir DIR -epoch N -tst FILE
 ```
 
 ## Visualize
 
 # Fixing sentence pairs
 
+```
+python -u ./fix.py -use_punct < FILE_WITH_ALIGNMENTS
+```
