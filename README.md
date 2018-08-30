@@ -39,15 +39,15 @@ Once the training parallel corpora is preprocessed we are ready to prepare our t
 
 ```
 python ./build_data.py -data FILE \
-                       -mode purid \
+                       -mode STRING \
                        -replace FILE
 ```
-Data modes:
-* p: Parallel sentences
-* u: uneven sentences
-* r: replace 
-* i: insert
-* d: delete
+Available modes:
+* 'p': Parallel sentences
+* 'u': uneven sentences
+* 'r': replace sequences of equivalent POS (needs source POS-tags in input FILE and replace FILE)
+* 'i': insert new sentence
+* 'd': delete sequence (needs word alignments in input FILE)
 
 # Learning
 ```
