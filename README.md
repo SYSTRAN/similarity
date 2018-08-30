@@ -43,10 +43,20 @@ python ./build_data.py -data FILE \
                        -replace FILE
 ```
 The input data file contains one sentence pair per line, with the next fields separated by TABs:
-* source sentence (Ex: Why wait for the Euro ?)
-* target sentence (Ex: Pourquoi attendre l ' Euro ?)
-* source/target alignments (Ex: 0-0 1-1 2-1 3-2 4-3 4-4 5-5)
-* source part-of-speeches (Ex: WRB NNP IN DT NNP SYM)
+* source sentence
+ :point_right: Ex: Why wait for the Euro ?
+
+* target sentence
+
+ :point_right: Pourquoi attendre l ' Euro ?
+
+* source/target alignments
+
+ :point_right: 0-0 1-1 2-1 3-2 4-3 4-4 5-5
+
+* source part-of-speeches
+
+ :point_right: WRB NNP IN DT NNP SYM
 
 (The last two fields are optional)
 
