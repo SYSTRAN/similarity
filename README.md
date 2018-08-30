@@ -77,22 +77,22 @@ Available modes:
 python ./similarity.py -mdir DIR \
        		       -dev FILE \
 		       -trn FILE 
-		       -mode MODE \
+		       -mode STRING \
 		       -max_sents 1000000 \
 		       -src_voc FILE \
 		       -tgt_voc FILE \
 		       -src_emb FILE \
 		       -tgt_emb FILE \
-		       -batch_size N \
-		       -n_epochs N \
-		       -seq_size N \
+		       -batch_size INT \
+		       -n_epochs INT \
+		       -seq_size INT \
 		       -lr_method STRING \
 		       -lr FLOAT \
 		       -lr_decay STRING \
 		       -dropout FLOAT \
 		       -aggr STRING \
-		       -src_lstm_size N \
-		       -tgt_lstm_size N
+		       -src_lstm_size INT \
+		       -tgt_lstm_size INT
 ```
 # Inference
 ```
