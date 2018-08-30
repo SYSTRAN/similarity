@@ -57,7 +57,7 @@ Available modes:
 
 * 'u': uneven sentences
 
- Why wait for the Euro ?   **Cela peut donc se produire .**   1.0 1.0 1.0 1.0 1.0 1.0   **1.0 1.0 1.0 1.0 1.0 1.0**
+  _ Why wait for the Euro ?   **Cela peut donc se produire .**   1.0 1.0 1.0 1.0 1.0 1.0   **1.0 1.0 1.0 1.0 1.0 1.0**
 
 * 'i': insert sentence
 
