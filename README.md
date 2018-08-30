@@ -78,7 +78,7 @@ python ./similarity.py -mdir DIR \
        		       -dev FILE \
 		       -trn FILE 
 		       -mode STRING \
-		       -max_sents 1000000 \
+		       -max_sents INT \
 		       -src_voc FILE \
 		       -tgt_voc FILE \
 		       -src_emb FILE \
