@@ -76,7 +76,6 @@ Available modes:
 ```
 python similarity.py
 *  -mdir          FILE : directory to save/restore models
-
    -seq_size       INT : sentences larger than this number of src/tgt words are filtered out [50]
    -batch_size     INT : number of examples per batch [32]
    -seed           INT : seed for randomness [1234]
@@ -84,15 +83,12 @@ python similarity.py
  [LEARNING OPTIONS]
 *  -trn           FILE : training data
    -dev           FILE : validation data
-
    -src_voc       FILE : vocabulary of src words (needed to initialize learning)
    -tgt_voc       FILE : vocabulary of tgt words (needed to initialize learning)
    -src_emb       FILE : embeddings of src words (needed to initialize learning)
    -tgt_emb       FILE : embeddings of tgt words (needed to initialize learning)
-
    -src_lstm_size  INT : hidden units for src bi-lstm [256]
    -tgt_lstm_size  INT : hidden units for tgt bi-lstm [256]
-
    -lr           FLOAT : initial learning rate [1.0]
    -lr_decay     FLOAT : learning rate decay [0.9]
    -lr_method   STRING : GD method either: adam, adagrad, adadelta, sgd, rmsprop [adagrad]
@@ -112,8 +108,6 @@ python similarity.py
 ```
 python -u similarity.py
 *  -mdir          FILE : directory to save/restore models
-
-   -seq_size       INT : sentences larger than this number of src/tgt words are filtered out [50]
    -batch_size     INT : number of examples per batch [32]
    -seed           INT : seed for randomness [1234]
    -debug              : debug mode
