@@ -54,7 +54,7 @@ The input data file contains one sentence pair per line, with the next fields se
 
 Available modes:
 * 'p': parallel sentences
- <pre>Why wait for the Euro ?   **Pourquoi** attendre l ' Euro ?   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0</pre>
+ <pre>Why wait for the Euro ?   Pourquoi attendre l ' Euro ?   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0</pre>
 
 * 'u': uneven sentences
  <pre>Why wait for the Euro ?   Cela peut donc se produire .   1.0 1.0 1.0 1.0 1.0 1.0   1.0 1.0 1.0 1.0 1.0 1.0</pre>
@@ -74,20 +74,25 @@ Available modes:
 
 # Learning
 ```
-python ./divergence_tagger.py -mdir DIR -dev FILE -trn FILE -data_mode $DATAMODE -net_mode $NETMODE -max_sents 1000000 -src_voc $REMOTEDIR/$sdic -tgt_voc $REMOTEDIR/$tdic -src_emb $REMOTEDIR/$semb -tgt_emb $REMOTEDIR/$temb -batch_size $BATCH -n_epochs $NEPOCHS -seq_size $SEQ -lr_method $METHOD -lr $LR -lr_decay $DECAY -dropout $DROP -aggr $AGGR -src_lstm_size $LSTM -tgt_lstm_size $LSTM
-                              -dev FILE \
-                              -trn FILE \
-                              -wrd_dict FILE \
-                              -tag_dict FILE \
-                              -emb_size 100 \
-                              -seq_size 100 \
-                              -lstm_size 64 \
-                              -batch_size 4 \
-                              -lr_method sgd \
-                              -lr 1.0 \
-                              -lr_decay 0.8 \
-                              -dropout 0.3 \
-                              -n_epochs 15
+python ./similarity.py -mdir DIR \
+       		       -dev FILE \
+		       -trn FILE 
+		       -mode MODE \
+		       -max_sents 1000000 \
+		       -src_voc FILE \
+		       -tgt_voc FILE \
+		       -src_emb FILE \
+		       -tgt_emb FILE \
+		       -batch_size N \
+		       -n_epochs N \
+		       -seq_size N \
+		       -lr_method STRING \
+		       -lr FLOAT \
+		       -lr_decay STRING \
+		       -dropout FLOAT \
+		       -aggr STRING \
+		       -src_lstm_size N \
+		       -tgt_lstm_size N
 ```
 # Inference
 ```
