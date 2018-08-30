@@ -134,10 +134,8 @@ python -u similarity.py
 + -show_last, -show_aggr and -show_align can be used at the same time
 ```
 
-## Visualize
-
 # Fixing sentence pairs
 
 ```
-python -u ./fix.py -use_punct < FILE_WITH_ALIGNMENTS
+python -u ./fix.py [-tau INT] [-nbest INT] [-max_sim FLOAT] [-use_punct] < FILE_WITH_ALIGNMENTS
 ```
