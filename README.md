@@ -48,27 +48,27 @@ The input data file contains one sentence pair per line, with the next fields se
 * source/target alignments
 * source part-of-speeches
 
- <pre>Why wait for the Euro ?  Pourquoi attendre l ' Euro ?  0-0 1-1 2-1 3-2 4-3 4-4 5-5  WRB NNP IN DT NNP SYM</pre>
+ <pre>Why wait for the Euro ?   Pourquoi attendre l ' Euro ?   0-0 1-1 2-1 3-2 4-3 4-4 5-5   WRB NNP IN DT NNP SYM</pre>
 
 (The last two fields are optional)
 
 Available modes:
 * 'p': Parallel sentences
- <pre>Why wait for the Euro ?  Pourquoi attendre l ' Euro ?  -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  -1.0 -1.0 -1.0 -1.0 -1.0 -1.0</pre>
+ <pre>Why wait for the Euro ?   Pourquoi attendre l ' Euro ?   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0</pre>
 
 * 'u': uneven sentences
- <pre>Why wait for the Euro ?  Cela peut donc se produire .  1.0 1.0 1.0 1.0 1.0 1.0  1.0 1.0 1.0 1.0 1.0 1.0</pre>
+ <pre>Why wait for the Euro ?   Cela peut donc se produire .   1.0 1.0 1.0 1.0 1.0 1.0   1.0 1.0 1.0 1.0 1.0 1.0</pre>
 
 * 'i': insert sentence
- <pre>Why wait for the Euro ?  Pourquoi attendre l ' Euro ? Il existe un précédant .  -1.0 -1.0 -1.0 -1.0 -1.0 -1.0  -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 1.0 1.0 1.0 1.0 1.0</pre>
+ <pre>Why wait for the Euro ?   Pourquoi attendre l ' Euro ? Il existe un précédant .   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 1.0 1.0 1.0 1.0 1.0</pre>
 
 * 'd': delete sequence
- <pre>Why wait for the Euro ?  l ' Euro ?  1.0 1.0 1.0 -1.0 -1.0 -1.0  -1.0 -1.0 -1.0 -1.0</pre>
+ <pre>Why wait for the Euro ?   l ' Euro ?   1.0 1.0 1.0 -1.0 -1.0 -1.0   -1.0 -1.0 -1.0 -1.0</pre>
 
  (needs word alignments in input FILE)
 
 * 'r': replace sequences with equivalent part-of-speech
- <pre>Where wait for the Euro ?   **Pourquoi attendre l ' Euro ?**   1.0 -1.0 -1.0 -1.0 -1.0 -1.0   **1.0 -1.0 -1.0 -1.0 -1.0 -1.0**</pre>
+ <pre>Where wait for the Euro ?  Pourquoi attendre l ' Euro ?  1.0 -1.0 -1.0 -1.0 -1.0 -1.0  1.0 -1.0 -1.0 -1.0 -1.0 -1.0</pre>
 
  (needs word alignments and source POS-tags in -data FILE and equivalent sequences in -replace FILE)
 
