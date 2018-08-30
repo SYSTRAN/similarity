@@ -65,7 +65,7 @@ The input data file contains one sentence pair per line, with the next fields se
 Available modes:
 * 'p': parallel sentences
  <pre>Why wait for the Euro ?   Pourquoi attendre l' Euro ?   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   -1.0 -1.0 -1.0 -1.0 -1.0</pre>
- Original parallel sentence from the bitext.
+ Parallel sentences from the bitext.
 
 * 'u': uneven sentences
  <pre>Why wait for the Euro ?   Cela peut donc se produire .   1.0 1.0 1.0 1.0 1.0 1.0   1.0 1.0 1.0 1.0 1.0 1.0</pre>
@@ -73,11 +73,11 @@ Available modes:
 
 * 'i': insert sentence
  <pre>Why wait for the Euro ?   Pourquoi attendre l' Euro ? Il existe un précédant .   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   -1.0 -1.0 -1.0 -1.0 -1.0 1.0 1.0 1.0 1.0 1.0</pre>
- Inserted the sentence 'Il existe un précédant .' at the end of the target original sentence.
+ Inserted the sentence 'Il existe un précédant .' at the end of the original target sentence.
 
 * 'd': delete sequence
  <pre>Why wait for the Euro ?   l' Euro ?   1.0 1.0 1.0 -1.0 -1.0 -1.0   -1.0 -1.0 -1.0</pre>
- Deleted the sequence 'Pourquoi attendre' from the target original sentence.
+ Deleted the sequence 'Pourquoi attendre' from the original target  sentence.
 
  (needs word alignments in input FILE)
 
