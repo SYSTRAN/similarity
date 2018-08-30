@@ -56,13 +56,20 @@ Available modes:
  Why wait for the Euro ?   Pourquoi attendre l ' Euro ?   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0
 
 * 'u': uneven sentences
- (Ex: Why wait for the Euro ?   Cela peut donc se produire .   1.0 1.0 1.0 1.0 1.0 1.0   1.0 1.0 1.0 1.0 1.0 1.0)
+
+ Why wait for the Euro ?   Cela peut donc se produire .   1.0 1.0 1.0 1.0 1.0 1.0   1.0 1.0 1.0 1.0 1.0 1.0
+
 * 'i': insert sentence
- (Ex: Why wait for the Euro ?   Pourquoi attendre l ' Euro ? Il existe un précédant .   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 1.0 1.0 1.0 1.0 1.0)
+
+ Why wait for the Euro ?   Pourquoi attendre l ' Euro ? Il existe un précédant .   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0 1.0 1.0 1.0 1.0 1.0
+
 * 'd': delete sequence (needs word alignments in input FILE)
- (Ex: Why wait for the Euro ?   l ' Euro ?   1.0 1.0 1.0 -1.0 -1.0 -1.0   -1.0 -1.0 -1.0 -1.0)
+
+ Why wait for the Euro ?   l ' Euro ?   1.0 1.0 1.0 -1.0 -1.0 -1.0   -1.0 -1.0 -1.0 -1.0
+
 * 'r': replace sequences with equivalent part-of-speech (needs word alignments and source POS-tags in -data FILE and equivalent sequences in -replace FILE)
- (Ex: Where wait for the Euro ?   Pourquoi attendre l ' Euro ?   1.0 -1.0 -1.0 -1.0 -1.0 -1.0   1.0 -1.0 -1.0 -1.0 -1.0 -1.0)
+
+ Where wait for the Euro ?   Pourquoi attendre l ' Euro ?   1.0 -1.0 -1.0 -1.0 -1.0 -1.0   1.0 -1.0 -1.0 -1.0 -1.0 -1.0
 
 # Learning
 ```
