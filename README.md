@@ -81,8 +81,6 @@ python similarity.py
    -batch_size     INT : number of examples per batch [32]
    -seed           INT : seed for randomness [1234]
    -debug              : debug mode
-   -h                  : this message
-
  [LEARNING OPTIONS]
 *  -trn           FILE : training data
    -dev           FILE : validation data
@@ -105,6 +103,10 @@ python similarity.py
    -max_sents      INT : Consider this number of sentences per batch (0 for all) [0]
    -n_epochs       INT : train for this number of epochs [1]
    -report_every   INT : report every this many batches [1000]
+
++ Options marked with * must be set. The rest have default values.
++ If -mdir exists in learning mode, learning continues after restoring the last model
++ Training data is shuffled at every epoch
 ```
 # Inference
 ```
@@ -115,8 +117,6 @@ python -u similarity.py
    -batch_size     INT : number of examples per batch [32]
    -seed           INT : seed for randomness [1234]
    -debug              : debug mode
-   -h                  : this message
-
  [INFERENCE OPTIONS]
 *  -epoch          INT : epoch to use ([mdir]/epoch[epoch] must exist)
 *  -tst           FILE : testing data
@@ -125,6 +125,9 @@ python -u similarity.py
    -show_align         : output source/target alignment matrix (mode must be alignment)
    -show_last          : output source/target last vectors
    -show_aggr          : output source/target aggr vectors
+
++ Options marked with * must be set. The rest have default values.
++ -show_last, -show_aggr and -show_align can be used at the same time
 ```
 
 ## Visualize
