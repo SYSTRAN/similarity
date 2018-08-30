@@ -48,7 +48,7 @@ The input data file contains one sentence pair per line, with the next fields se
 * source/target alignments
 * source part-of-speeches
 
- :point_right: <pre>Why wait for the Euro ?       **Pourquoi attendre l ' Euro ?** 0-0 1-1 2-1 3-2 4-3 4-4 5-5 **WRB NNP IN DT NNP SYM**
+ :point_right: <pre>Why wait for the Euro ?       **Pourquoi attendre l ' Euro ?** 0-0 1-1 2-1 3-2 4-3 4-4 5-5 **WRB NNP IN DT NNP SYM** </pre>
 
 (The last two fields are optional)
 
