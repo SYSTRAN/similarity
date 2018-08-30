@@ -53,7 +53,7 @@ The input data file contains one sentence pair per line, with the next fields se
 Available modes:
 * 'p': Parallel sentences
 
- - Why wait for the Euro ?   **Pourquoi attendre l ' Euro ?**   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   **-1.0 -1.0 -1.0 -1.0 -1.0 -1.0**
+ :+1:Why wait for the Euro ?   **Pourquoi attendre l ' Euro ?**   -1.0 -1.0 -1.0 -1.0 -1.0 -1.0   **-1.0 -1.0 -1.0 -1.0 -1.0 -1.0**
 
 * 'u': uneven sentences
 
