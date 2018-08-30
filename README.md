@@ -96,7 +96,9 @@ python ./similarity.py -mdir DIR \
 ```
 # Inference
 ```
-python -u similarity.py -mdir DIR -epoch N -tst FILE
+python -u similarity.py -mdir DIR \
+       	  		-epoch INT \
+			-tst FILE
 ```
 
 ## Visualize
