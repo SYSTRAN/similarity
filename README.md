@@ -45,7 +45,7 @@ python ./build_data.py -data FILE \
 Available modes:
 * 'p': Parallel sentences
 * 'u': uneven sentences
-* 'r': replace sequences with equivalent part-of-speech (needs source POS-tags in input FILE and replace FILE)
+* 'r': replace sequences with equivalent part-of-speech (needs word alignments and source POS-tags in input FILE and replace FILE)
 * 'i': insert new sentence
 * 'd': delete sequence (needs word alignments in input FILE)
 
