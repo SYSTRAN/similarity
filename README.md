@@ -102,6 +102,8 @@ python -u similarity.py
    -tgt_voc       FILE : vocabulary of tgt words (needed to initialize learning)
    -src_emb       FILE : embeddings of src words (needed to initialize learning)
    -tgt_emb       FILE : embeddings of tgt words (needed to initialize learning)
+   -src_emb_size   INT : size of src embeddings if -src_emb not used
+   -tgt_emb_size   INT : size of tgt embeddings if -tgt_emb not used
    -src_lstm_size  INT : hidden units for src bi-lstm [256]
    -tgt_lstm_size  INT : hidden units for tgt bi-lstm [256]
    -lr           FLOAT : initial learning rate [1.0]
