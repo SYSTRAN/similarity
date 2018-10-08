@@ -27,6 +27,8 @@ class Config():
    -tgt_voc       FILE : vocabulary of tgt words (needed to initialize learning)
    -src_emb       FILE : embeddings of src words (needed to initialize learning)
    -tgt_emb       FILE : embeddings of tgt words (needed to initialize learning)
+   -src_emb_size   INT : size of src embeddings if -src_emb not used
+   -tgt_emb_size   INT : size of tgt embeddings if -tgt_emb not used
 
    -src_lstm_size  INT : hidden units for src bi-lstm [256]
    -tgt_lstm_size  INT : hidden units for tgt bi-lstm [256]
@@ -200,9 +202,9 @@ class Config():
             copyfile(self.src_voc, self.mdir + "/vocab_src")
             copyfile(self.tgt_voc, self.mdir + "/vocab_tgt")
             #read embeddings
-            self.emb_src = Embeddings(self.src_emb,self.voc_src) ### read file or use emb_src.length if file is not set
+            self.emb_src = Embeddings(self.src_emb,self.voc_src,self.src_emb_size) ### read file or use emb_src.length if file is not set
             self.src_emb_size = self.emb_src.dim
-            self.emb_tgt = Embeddings(self.tgt_emb,self.voc_tgt) ### read file or use emb_tgt.length if file is not set
+            self.emb_tgt = Embeddings(self.tgt_emb,self.voc_tgt,self.tgt_emb_size) ### read file or use emb_tgt.length if file is not set
             self.tgt_emb_size = self.emb_tgt.dim
             #write topology file
             with open(self.mdir + "/topology", 'w') as f: 

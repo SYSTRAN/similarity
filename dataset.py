@@ -19,7 +19,7 @@ str_pad = "<pad>"
 
 class Embeddings():
 
-    def __init__(self, file, voc):
+    def __init__(self, file, voc, length):
         w2e = {}
         if file is not None:
             #with io.open(file, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
@@ -38,7 +38,8 @@ class Embeddings():
             f.close()
             sys.stderr.write('Read {} embeddings ({} missing in voc)\n'.format(len(w2e),len(voc)-len(w2e)))
         else:
-            sys.stderr.write('Embeddings not used!\n')
+            sys.stderr.write('Embeddings file not used! will be initialised to [{}x{}]\n'.format(len(voc),length))
+            self.dim = length
 
         # i need an embedding for each word in voc
         # embedding matrix must have tokens in same order than voc 0:<unk>, 1:<pad>, 2:le, ...
