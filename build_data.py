@@ -85,7 +85,13 @@ class align():
         self.s2t_minmax = [[None, None] for i in range(len(src))]
         self.t2s_minmax = [[None, None] for i in range(len(tgt))]
         for a in ali:
+            if len(a.split('-')) != 2:
+                sys.stderr.write('warning: bad ali {}\n'.format(ali))
+                continue
             s, t = map(int, a.split('-'))
+            if s>=len(src) or t>=len(tgt):
+                sys.stderr.write('warning: ali {}-{} out of bounds\nsrc: {}\ntgt: {}\nali: {}\n'.format(s,t,src,tgt,ali))
+                continue                
             if self.s2t_minmax[s][0] is None:
                 self.s2t_minmax[s][0] = t
                 self.s2t_minmax[s][1] = t
@@ -500,7 +506,7 @@ def main():
                 if n_total%1000000==0: sys.stderr.write(str(n_total))
                 else: sys.stderr.write(".")
             i += 1
-            tok = line.strip().split("\t")
+            tok = line.strip('\n').split("\t")
             if len(tok)<2:
                 sys.stderr.write('warning: line {} contains less than 2 fields [skipping line]\n'.format(i))
                 continue
