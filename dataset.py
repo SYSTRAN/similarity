@@ -62,13 +62,13 @@ class Vocab():
         self.tok_to_idx[str_unk] = len(self.tok_to_idx) #0
         self.idx_to_tok.append(str_pad)
         self.tok_to_idx[str_pad] = len(self.tok_to_idx) #1
-        with io.open(dict_file, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
-            nline = 0
-            for line in f:
-                nline += 1
-                line = line.strip()
-                self.idx_to_tok.append(line)
-                self.tok_to_idx[line] = len(self.tok_to_idx)
+        #with io.open(dict_file, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
+        nline = 0
+        for line in [line.rstrip('\n') for line in open(dict_file)]:
+            nline += 1
+            line = line.strip()
+            self.idx_to_tok.append(line)
+            self.tok_to_idx[line] = len(self.tok_to_idx)
 
         self.length = len(self.idx_to_tok)
         sys.stderr.write('Read vocab ({} entries)\n'.format(self.length))
