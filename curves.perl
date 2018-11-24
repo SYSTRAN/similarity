@@ -22,7 +22,7 @@ while (<>){
     }
 }
 
-print "Epoch\tT_Fscr\tT__loss\tV_Fscr\tV__loss\tLR\n";
+print "Epoch\tT____F\tT__loss\tV____F\tV__loss\tLR\n";
 foreach $epoch (sort {$a <=> $b} keys %TF){
     print "$epoch\t$TF{$epoch}\t$TL{$epoch}\t$VF{$epoch}\t$VL{$epoch}\t$lr{$epoch}\n";
 }
