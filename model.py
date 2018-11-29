@@ -118,7 +118,7 @@ class Model():
         ES = self.config.tgt_emb_size #tgt embedding size
         L1 = self.config.tgt_lstm_size #tgt lstm size
 #        print("TGT NW={} ES={}".format(NW,ES))
-        if not self.share:
+        if not self.config.share:
             with tf.device('/cpu:0'), tf.variable_scope("embedding_tgt"):
                 self.LT_tgt = tf.get_variable(initializer = self.embedding_initialize(NW, ES, self.config.emb_tgt), dtype=tf.float32, name="embeddings_tgt")
                 self.embed_tgt = tf.nn.embedding_lookup(self.LT_tgt, self.input_tgt, name="input_matrix_tgt")
