@@ -101,15 +101,14 @@ class Model():
 #            print("SRC L1={}".format(L1))
             cell_fw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True)
             cell_bw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True)
-            ini_fw = cell_fw.zero_state(BS,dtype=tf.float32)
-            ini_bw = cell_bw.zero_state(BS,dtype=tf.float32)
-            (output_fw, output_bw), (last_fw, last_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_src, initial_state_fw = ini_fw, initial_state_bw = ini_bw, sequence_length=self.len_src, dtype=tf.float32)
-            ### divergent
-            self.last_src = tf.concat([last_fw[1], last_bw[1]], axis=1)
-            self.last_src = tf.nn.dropout(self.last_src, keep_prob=KEEP)
-            ### alignment
-            self.out_src = tf.concat([output_fw, output_bw], axis=2)
-            self.out_src = tf.nn.dropout(self.out_src, keep_prob=KEEP)
+            (output_fw, output_bw), (last_fw, last_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_src, sequence_length=self.len_src, dtype=tf.float32)
+
+        ### divergent
+        self.last_src = tf.concat([last_fw[1], last_bw[1]], axis=1)
+        self.last_src = tf.nn.dropout(self.last_src, keep_prob=KEEP)
+        ### alignment
+        self.out_src = tf.concat([output_fw, output_bw], axis=2)
+        self.out_src = tf.nn.dropout(self.out_src, keep_prob=KEEP)
 
         ###
         ### tgt-side
@@ -128,35 +127,27 @@ class Model():
 #            print("TGT L1={}".format(L1))
                 cell_fw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True)
                 cell_bw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True)
-                ini_fw = cell_fw.zero_state(BS,dtype=tf.float32)
-                ini_bw = cell_bw.zero_state(BS,dtype=tf.float32)
-                (output_fw, output_bw), (last_fw, last_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_tgt, initial_state_fw = ini_fw, initial_state_bw = ini_bw, sequence_length=self.len_tgt, dtype=tf.float32)
-                ### divergent
-                self.last_tgt = tf.concat([last_fw[1], last_bw[1]], axis=1)                
-                self.last_tgt = tf.nn.dropout(self.last_tgt, keep_prob=KEEP)
-                ### alignment
-                self.out_tgt = tf.concat([output_fw, output_bw], axis=2)
-                self.out_tgt = tf.nn.dropout(self.out_tgt, keep_prob=KEEP)
+                (output_fw, output_bw), (last_fw, last_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_tgt, sequence_length=self.len_tgt, dtype=tf.float32)
 
         else: ### share parameters
-            with tf.device('/cpu:0'), tf.variable_scope("embedding_src",reuse=True):
+            sys.stdout.write('sharing parameters')
+            with tf.device('/cpu:0'), tf.variable_scope("embedding_src", reuse=True):
                 self.LT_tgt = tf.get_variable(initializer = self.embedding_initialize(NW, ES, self.config.emb_tgt), dtype=tf.float32, name="embeddings_src")
+                assert(self.LT_src == self.LT_tgt)
                 self.embed_tgt = tf.nn.embedding_lookup(self.LT_tgt, self.input_tgt, name="input_matrix_tgt")
                 self.embed_tgt = tf.nn.dropout(self.embed_tgt, keep_prob=KEEP)
 
-            with tf.variable_scope("lstm_src",reuse=True):
-#            print("TGT L1={}".format(L1))
-                cell_fw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True)
-                cell_bw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True)
-                ini_fw = cell_fw.zero_state(BS,dtype=tf.float32)
-                ini_bw = cell_bw.zero_state(BS,dtype=tf.float32)
-                (output_fw, output_bw), (last_fw, last_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_tgt, initial_state_fw = ini_fw, initial_state_bw = ini_bw, sequence_length=self.len_tgt, dtype=tf.float32)
-                ### divergent
-                self.last_tgt = tf.concat([last_fw[1], last_bw[1]], axis=1)                
-                self.last_tgt = tf.nn.dropout(self.last_tgt, keep_prob=KEEP)
-                ### alignment
-                self.out_tgt = tf.concat([output_fw, output_bw], axis=2)
-                self.out_tgt = tf.nn.dropout(self.out_tgt, keep_prob=KEEP)
+            with tf.variable_scope("lstm_src", reuse=True):
+                cell_fw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True, reuse=True)
+                cell_bw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True, reuse=True)
+                (output_fw, output_bw), (last_fw, last_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_tgt, sequence_length=self.len_tgt, dtype=tf.float32)
+
+        ### divergent
+        self.last_tgt = tf.concat([last_fw[1], last_bw[1]], axis=1)                
+        self.last_tgt = tf.nn.dropout(self.last_tgt, keep_prob=KEEP)
+        ### alignment
+        self.out_tgt = tf.concat([output_fw, output_bw], axis=2)
+        self.out_tgt = tf.nn.dropout(self.out_tgt, keep_prob=KEEP)
 
         # next is a tensor containing similarity distances (one for each sentence pair) using the last vectors
         self.cos_similarity = tf.reduce_sum(tf.nn.l2_normalize(self.last_src, dim=1) * tf.nn.l2_normalize(self.last_tgt, dim=1), axis=1) ### +1:similar -1:divergent
