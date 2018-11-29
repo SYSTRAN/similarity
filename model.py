@@ -141,8 +141,8 @@ class Model():
 
 #            with tf.variable_scope("lstm_src", reuse=True):
             with tf.variable_scope("lstm_tgt"):
-                cell_fw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True, reuse=True)
-                cell_bw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True, reuse=True)
+                cell_fw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True)#, reuse=True)
+                cell_bw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True)#, reuse=True)
                 (output_fw, output_bw), (last_fw, last_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_tgt, sequence_length=self.len_tgt, dtype=tf.float32)
 
         ### divergent
