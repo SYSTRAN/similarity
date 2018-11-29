@@ -29,9 +29,13 @@ class Config():
    -tgt_emb       FILE : embeddings of tgt words (needed to initialize learning)
    -src_emb_size   INT : size of src embeddings if -src_emb not used
    -tgt_emb_size   INT : size of tgt embeddings if -tgt_emb not used
-
+   
    -src_lstm_size  INT : hidden units for src bi-lstm [256]
    -tgt_lstm_size  INT : hidden units for tgt bi-lstm [256]
+
+   -share              : shared parameters of source/target subnetworks 
+                         Attention, options: tgt_voc, tgt_emb, -tgt_emb_size, -tgt_lstm_size
+                         are set the same than the corresponding src ones
 
    -lr           FLOAT : initial learning rate [1.0]
    -lr_decay     FLOAT : learning rate decay [0.9]
@@ -75,6 +79,8 @@ class Config():
         self.emb_src = None # object with embeddings
         self.emb_tgt = None # object with embeddings
 
+        self.share = False
+
         self.src_lstm_size = 256
         self.tgt_lstm_size = 256
 
@@ -109,6 +115,13 @@ class Config():
         if not self.mdir:
             sys.stderr.write("error: Missing -mdir option\n{}".format(self.usage))
             sys.exit()
+
+        if self.share:
+            self.tgt_voc = self.src_voc
+            self.tgt_emb = self.src_emb
+            self.tgt_emb_size = self.src_emb_size
+            self.tgt_lstm_size = self.src_lstm_size
+            self.emb_tgt = self.emb_src
 
         if self.tst: self.inference()
         if self.trn: self.learn()
@@ -258,6 +271,9 @@ class Config():
                 self.src_lstm_size = int(argv.pop(0))
             elif (tok=="-tgt_lstm_size" and len(argv)):
                 self.tgt_lstm_size = int(argv.pop(0))
+
+            elif (tok=="-share"):
+                self.share = True
 
             elif (tok=="-seq_size" and len(argv)):
                 self.seq_size = int(argv.pop(0))
