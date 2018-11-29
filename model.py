@@ -110,6 +110,8 @@ class Model():
         self.out_src = tf.concat([output_fw, output_bw], axis=2)
         self.out_src = tf.nn.dropout(self.out_src, keep_prob=KEEP)
 
+        print(sum(variable.get_shape().num_elements() for variable in tf.trainable_variables()))
+
         ###
         ### tgt-side
         ###
@@ -130,7 +132,7 @@ class Model():
                 (output_fw, output_bw), (last_fw, last_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_tgt, sequence_length=self.len_tgt, dtype=tf.float32)
 
         else: ### share parameters
-            sys.stdout.write('sharing parameters')
+            sys.stdout.write('sharing parameters\n')
             with tf.device('/cpu:0'), tf.variable_scope("embedding_src", reuse=True):
                 self.LT_tgt = tf.get_variable(initializer = self.embedding_initialize(NW, ES, self.config.emb_tgt), dtype=tf.float32, name="embeddings_src")
                 assert(self.LT_src == self.LT_tgt)
@@ -148,6 +150,8 @@ class Model():
         ### alignment
         self.out_tgt = tf.concat([output_fw, output_bw], axis=2)
         self.out_tgt = tf.nn.dropout(self.out_tgt, keep_prob=KEEP)
+
+        print(sum(variable.get_shape().num_elements() for variable in tf.trainable_variables()))
 
         # next is a tensor containing similarity distances (one for each sentence pair) using the last vectors
         self.cos_similarity = tf.reduce_sum(tf.nn.l2_normalize(self.last_src, dim=1) * tf.nn.l2_normalize(self.last_tgt, dim=1), axis=1) ### +1:similar -1:divergent
