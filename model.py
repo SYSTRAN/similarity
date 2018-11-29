@@ -140,7 +140,7 @@ class Model():
 
         else: ### share parameters
             with tf.device('/cpu:0'), tf.variable_scope("embedding_src",reuse=True):
-                self.LT_tgt = tf.get_variable(initializer = self.embedding_initialize(NW, ES, self.config.emb_tgt), dtype=tf.float32, name="embeddings_tgt")
+                self.LT_tgt = tf.get_variable(initializer = self.embedding_initialize(NW, ES, self.config.emb_tgt), dtype=tf.float32, name="embeddings_src")
                 self.embed_tgt = tf.nn.embedding_lookup(self.LT_tgt, self.input_tgt, name="input_matrix_tgt")
                 self.embed_tgt = tf.nn.dropout(self.embed_tgt, keep_prob=KEEP)
 
