@@ -152,7 +152,7 @@ class Model():
         self.out_tgt = tf.concat([output_fw, output_bw], axis=2)
         self.out_tgt = tf.nn.dropout(self.out_tgt, keep_prob=KEEP)
 
-        print("Total src/tgt parameters: {}",.format(sum(variable.get_shape().num_elements() for variable in tf.trainable_variables())))
+        print("Total src/tgt parameters: {}".format(sum(variable.get_shape().num_elements() for variable in tf.trainable_variables())))
 
         # next is a tensor containing similarity distances (one for each sentence pair) using the last vectors
         self.cos_similarity = tf.reduce_sum(tf.nn.l2_normalize(self.last_src, dim=1) * tf.nn.l2_normalize(self.last_tgt, dim=1), axis=1) ### +1:similar -1:divergent
