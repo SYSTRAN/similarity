@@ -110,7 +110,7 @@ class Model():
         self.out_src = tf.concat([output_fw, output_bw], axis=2)
         self.out_src = tf.nn.dropout(self.out_src, keep_prob=KEEP)
 
-        print("Total src parameters: {}",.format(sum(variable.get_shape().num_elements() for variable in tf.trainable_variables())))
+        print("Total src parameters: {}".format(sum(variable.get_shape().num_elements() for variable in tf.trainable_variables())))
 
         ###
         ### tgt-side
