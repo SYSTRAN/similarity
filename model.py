@@ -91,23 +91,28 @@ class Model():
         NW = self.config.src_voc_size #src vocab
         ES = self.config.src_emb_size #src embedding size
         L1 = self.config.src_lstm_size #src lstm size
-#        print("SRC NW={} ES={}".format(NW,ES))
+        #print("SRC NW={} ES={}".format(NW,ES))
         with tf.device('/cpu:0'), tf.variable_scope("embedding_src"):
             self.LT_src = tf.get_variable(initializer = self.embedding_initialize(NW, ES, self.config.emb_src), dtype=tf.float32, name="embeddings_src")
             self.embed_src = tf.nn.embedding_lookup(self.LT_src, self.input_src, name="embed_src")
             self.embed_src = tf.nn.dropout(self.embed_src, keep_prob=KEEP)
+            if self.config.share: #shared parameters
+                self.embed_tgt = tf.nn.embedding_lookup(self.LT_src, self.input_tgt, name="embed_tgt")
+                self.embed_tgt = tf.nn.dropout(self.embed_tgt, keep_prob=KEEP)
 
         with tf.variable_scope("lstm_src"):
-#            print("SRC L1={}".format(L1))
+            #print("SRC L1={}".format(L1))
             cell_fw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True)
             cell_bw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True)
-            (output_fw, output_bw), (last_fw, last_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_src, sequence_length=self.len_src, dtype=tf.float32)
+            (output_src_fw, output_src_bw), (last_src_fw, last_src_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_src, sequence_length=self.len_src, dtype=tf.float32)
+            if self.config.share: #shared parameters
+                (output_tgt_fw, output_tgt_bw), (last_tgt_fw, last_tgt_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_tgt, sequence_length=self.len_tgt, dtype=tf.float32)
 
         ### divergent
-        self.last_src = tf.concat([last_fw[1], last_bw[1]], axis=1)
+        self.last_src = tf.concat([last_src_fw[1], last_src_bw[1]], axis=1)
         self.last_src = tf.nn.dropout(self.last_src, keep_prob=KEEP)
         ### alignment
-        self.out_src = tf.concat([output_fw, output_bw], axis=2)
+        self.out_src = tf.concat([output_src_fw, output_src_bw], axis=2)
         self.out_src = tf.nn.dropout(self.out_src, keep_prob=KEEP)
 
         print("Total src parameters: {}".format(sum(variable.get_shape().num_elements() for variable in tf.trainable_variables())))
@@ -115,41 +120,28 @@ class Model():
         ###
         ### tgt-side
         ###
-        NW = self.config.tgt_voc_size #tgt vocab
-        ES = self.config.tgt_emb_size #tgt embedding size
-        L1 = self.config.tgt_lstm_size #tgt lstm size
-#        print("TGT NW={} ES={}".format(NW,ES))
         if not self.config.share:
+            NW = self.config.tgt_voc_size #tgt vocab
+            ES = self.config.tgt_emb_size #tgt embedding size
+            L1 = self.config.tgt_lstm_size #tgt lstm size
+            #print("TGT NW={} ES={}".format(NW,ES))
             with tf.device('/cpu:0'), tf.variable_scope("embedding_tgt"):
                 self.LT_tgt = tf.get_variable(initializer = self.embedding_initialize(NW, ES, self.config.emb_tgt), dtype=tf.float32, name="embeddings_tgt")
-                self.embed_tgt = tf.nn.embedding_lookup(self.LT_tgt, self.input_tgt, name="input_matrix_tgt")
+                self.embed_tgt = tf.nn.embedding_lookup(self.LT_tgt, self.input_tgt, name="embed_tgt")
                 self.embed_tgt = tf.nn.dropout(self.embed_tgt, keep_prob=KEEP)
-
+            
             with tf.variable_scope("lstm_tgt"):
-#            print("TGT L1={}".format(L1))
+                #print("TGT L1={}".format(L1))
                 cell_fw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True)
                 cell_bw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True)
-                (output_fw, output_bw), (last_fw, last_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_tgt, sequence_length=self.len_tgt, dtype=tf.float32)
+                (output_tgt_fw, output_tgt_bw), (last_tgt_fw, last_tgt_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_tgt, sequence_length=self.len_tgt, dtype=tf.float32)
 
-        else: ### share parameters
-            sys.stdout.write('sharing parameters\n')
-            with tf.device('/cpu:0'), tf.variable_scope("embedding_src", reuse=True):
-                self.LT_tgt = tf.get_variable(initializer = self.embedding_initialize(NW, ES, self.config.emb_tgt), dtype=tf.float32, name="embeddings_src")
-                assert(self.LT_src == self.LT_tgt)
-                self.embed_tgt = tf.nn.embedding_lookup(self.LT_tgt, self.input_tgt, name="input_matrix_tgt")
-                self.embed_tgt = tf.nn.dropout(self.embed_tgt, keep_prob=KEEP)
-
-            with tf.variable_scope("lstm_src", reuse=True):
-#            with tf.variable_scope("lstm_tgt"):
-                cell_fw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True, reuse=True)
-                cell_bw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True, reuse=True)
-                (output_fw, output_bw), (last_fw, last_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_tgt, sequence_length=self.len_tgt, dtype=tf.float32)
 
         ### divergent
-        self.last_tgt = tf.concat([last_fw[1], last_bw[1]], axis=1)                
+        self.last_tgt = tf.concat([last_tgt_fw[1], last_tgt_bw[1]], axis=1)                
         self.last_tgt = tf.nn.dropout(self.last_tgt, keep_prob=KEEP)
         ### alignment
-        self.out_tgt = tf.concat([output_fw, output_bw], axis=2)
+        self.out_tgt = tf.concat([output_tgt_fw, output_tgt_bw], axis=2)
         self.out_tgt = tf.nn.dropout(self.out_tgt, keep_prob=KEEP)
 
         print("Total src/tgt parameters: {}".format(sum(variable.get_shape().num_elements() for variable in tf.trainable_variables())))
