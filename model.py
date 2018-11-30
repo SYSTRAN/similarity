@@ -265,9 +265,9 @@ class Model():
                 iscore.add_batch(out,sign_batch)
             else:
                 _, loss, aggr_src, aggr_tgt = self.sess.run([self.train_op, self.loss, self.aggregation_src, self.aggregation_tgt], feed_dict=fd)
-                print("loss is {}".format(loss))
-                print("aggr_src is {}".format(aggr_src))
-                print("aggr_tgt is {}".format(aggr_tgt))
+#                print("loss is {}".format(loss))
+#                print("aggr_src is {}".format(aggr_src))
+#                print("aggr_tgt is {}".format(aggr_tgt))
                 tscore.add_batch_tokens(aggr_src, sign_src_batch, len_src_batch)
                 tscore.add_batch_tokens(aggr_tgt, sign_tgt_batch, len_tgt_batch)
                 iscore.add_batch_tokens(aggr_src, sign_src_batch, len_src_batch)

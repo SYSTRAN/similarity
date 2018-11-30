@@ -158,7 +158,10 @@ class Config():
 
         ### read vocabularies
         self.voc_src = Vocab(self.mdir + "/vocab_src") 
-        self.voc_tgt = Vocab(self.mdir + "/vocab_tgt")
+        if self.share:
+            self.voc_tgt = self.voc_src
+        else:
+            self.voc_tgt = Vocab(self.mdir + "/vocab_tgt")
         return  
 
     def learn(self):
@@ -194,7 +197,10 @@ class Config():
             self.parse(argv) ### this overrides options passed in command line
             ### read vocabularies
             self.voc_src = Vocab(self.mdir + "/vocab_src") 
-            self.voc_tgt = Vocab(self.mdir + "/vocab_tgt")
+            if self.share:
+                self.voc_tgt = self.voc_src
+            else:
+                self.voc_tgt = Vocab(self.mdir + "/vocab_tgt")
             ### update last epoch
             for e in range(999,0,-1):
                 if os.path.exists(self.mdir+"/epoch{}.index".format(e)): 
@@ -206,8 +212,11 @@ class Config():
         ###
         else:
             self.voc_src = Vocab(self.src_voc) ### read file or config/vocab_src if file is not set
+            if self.share:
+                self.voc_tgt = self.voc_src
+            else:
+                self.voc_tgt = Vocab(self.tgt_voc) ### read file or config/vocab_tgt if file is not set
             self.src_voc_size = self.voc_src.length
-            self.voc_tgt = Vocab(self.tgt_voc) ### read file or config/vocab_tgt if file is not set
             self.tgt_voc_size = self.voc_tgt.length
 
             if not os.path.exists(self.mdir): os.makedirs(self.mdir)
