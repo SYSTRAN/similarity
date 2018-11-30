@@ -217,8 +217,12 @@ class Config():
             #read embeddings
             self.emb_src = Embeddings(self.src_emb,self.voc_src,self.src_emb_size) ### read file or use emb_src.length if file is not set
             self.src_emb_size = self.emb_src.dim
-            self.emb_tgt = Embeddings(self.tgt_emb,self.voc_tgt,self.tgt_emb_size) ### read file or use emb_tgt.length if file is not set
-            self.tgt_emb_size = self.emb_tgt.dim
+            if self.share:
+                self.emb_tgt = self.emb_src
+                self.tgt_emb_size = self.src_emb_size
+            else:
+                self.emb_tgt = Embeddings(self.tgt_emb,self.voc_tgt,self.tgt_emb_size) ### read file or use emb_tgt.length if file is not set
+                self.tgt_emb_size = self.emb_tgt.dim
             #write topology file
             with open(self.mdir + "/topology", 'w') as f: 
                 for opt, val in vars(self).items():
