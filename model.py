@@ -139,10 +139,10 @@ class Model():
                 self.embed_tgt = tf.nn.embedding_lookup(self.LT_tgt, self.input_tgt, name="input_matrix_tgt")
                 self.embed_tgt = tf.nn.dropout(self.embed_tgt, keep_prob=KEEP)
 
-#            with tf.variable_scope("lstm_src", reuse=True):
-            with tf.variable_scope("lstm_tgt"):
-                cell_fw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True)#, reuse=True)
-                cell_bw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True)#, reuse=True)
+            with tf.variable_scope("lstm_src", reuse=True):
+#            with tf.variable_scope("lstm_tgt"):
+                cell_fw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True, reuse=True)
+                cell_bw = tf.contrib.rnn.LSTMCell(L1, state_is_tuple=True, reuse=True)
                 (output_fw, output_bw), (last_fw, last_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_tgt, sequence_length=self.len_tgt, dtype=tf.float32)
 
         ### divergent
@@ -153,6 +153,9 @@ class Model():
         self.out_tgt = tf.nn.dropout(self.out_tgt, keep_prob=KEEP)
 
         print("Total src/tgt parameters: {}".format(sum(variable.get_shape().num_elements() for variable in tf.trainable_variables())))
+        for variable in tf.trainable_variables():
+            print("var {} params={}".format(variable,variable.get_shape().num_elements()))
+
 
         # next is a tensor containing similarity distances (one for each sentence pair) using the last vectors
         self.cos_similarity = tf.reduce_sum(tf.nn.l2_normalize(self.last_src, dim=1) * tf.nn.l2_normalize(self.last_tgt, dim=1), axis=1) ### +1:similar -1:divergent
@@ -215,9 +218,11 @@ class Model():
             sys.stderr.write("error: bad lr_method option '{}'\n".format(self.config.lr_method))
             sys.exit()
 
-        tvars = tf.trainable_variables()
-        grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars),1.0)
-        self.train_op = optimizer.apply_gradients(zip(grads, tvars))
+        self.train_op = optimizer.minimize(self.loss)
+#        tvars = tf.trainable_variables()
+#        grads, _ = tf.clip_by_global_norm(tf.gradients(self.loss, tvars),1.0)
+#        self.train_op = optimizer.apply_gradients(zip(grads, tvars))
+
 
     def build_graph(self):
         self.add_placeholders()
@@ -267,6 +272,7 @@ class Model():
                 iscore.add_batch(out,sign_batch)
             else:
                 _, loss, aggr_src, aggr_tgt = self.sess.run([self.train_op, self.loss, self.aggregation_src, self.aggregation_tgt], feed_dict=fd)
+#                print("loss is {}".format(loss))
                 tscore.add_batch_tokens(aggr_src, sign_src_batch, len_src_batch)
                 tscore.add_batch_tokens(aggr_tgt, sign_tgt_batch, len_tgt_batch)
                 iscore.add_batch_tokens(aggr_src, sign_src_batch, len_src_batch)
