@@ -222,7 +222,7 @@ class Config():
             #write topology file
             with open(self.mdir + "/topology", 'w') as f: 
                 for opt, val in vars(self).items():
-                    if opt.startswith("src") or opt.startswith("tgt") or opt=="aggr" or opt=="mode": f.write("{} {}\n".format(opt,val))
+                    if opt.startswith("src") or opt.startswith("tgt") or opt=="aggr" or opt=="mode" or opt=="share": f.write("{} {}\n".format(opt,val))
             print("learning from scratch")
         return  
 
