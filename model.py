@@ -109,7 +109,7 @@ class Model():
             if self.config.share: #shared parameters
                 (output_tgt_fw, output_tgt_bw), (last_tgt_fw, last_tgt_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_tgt, sequence_length=self.len_tgt, dtype=tf.float32)
 
-        ### divergent
+        ### divergence
         self.last_src = tf.concat([last_src_fw[1], last_src_bw[1]], axis=1)
         self.last_src = tf.nn.dropout(self.last_src, keep_prob=KEEP)
         ### alignment
@@ -138,7 +138,7 @@ class Model():
                 (output_tgt_fw, output_tgt_bw), (last_tgt_fw, last_tgt_bw) = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, self.embed_tgt, sequence_length=self.len_tgt, dtype=tf.float32)
 
 
-        ### divergent
+        ### divergence
         self.last_tgt = tf.concat([last_tgt_fw[1], last_tgt_bw[1]], axis=1)                
         self.last_tgt = tf.nn.dropout(self.last_tgt, keep_prob=KEEP)
         ### alignment
@@ -264,10 +264,15 @@ class Model():
                 tscore.add_batch(out,sign_batch)
                 iscore.add_batch(out,sign_batch)
             else:
-                _, loss, aggr_src, aggr_tgt = self.sess.run([self.train_op, self.loss, self.aggregation_src, self.aggregation_tgt], feed_dict=fd)
+                _, loss, aggr_src, aggr_tgt, last_src, last_tgt = self.sess.run([self.train_op, self.loss, self.aggregation_src, self.aggregation_tgt, self.last_src, self.last_tgt], feed_dict=fd)
+#                print("src_batch is {}".format(src_batch[0]))
+#                print("tgt_batch is {}".format(tgt_batch[0]))
 #                print("loss is {}".format(loss))
 #                print("aggr_src is {}".format(aggr_src))
 #                print("aggr_tgt is {}".format(aggr_tgt))
+#                print("last_src is {}".format(last_src[0]))
+#                print("last_tgt is {}".format(last_tgt[0]))
+#                if iter==2: sys.exit()
                 tscore.add_batch_tokens(aggr_src, sign_src_batch, len_src_batch)
                 tscore.add_batch_tokens(aggr_tgt, sign_tgt_batch, len_tgt_batch)
                 iscore.add_batch_tokens(aggr_src, sign_src_batch, len_src_batch)
