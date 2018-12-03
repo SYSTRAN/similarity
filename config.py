@@ -285,8 +285,8 @@ class Config():
             elif (tok=="-tgt_lstm_size" and len(argv)):
                 self.tgt_lstm_size = int(argv.pop(0))
 
-            elif (tok=="-share"):
-                self.share = True
+            elif (tok=="-share" and len(argv)):
+                self.share = argv.pop(0)=="True"
 
             elif (tok=="-seq_size" and len(argv)):
                 self.seq_size = int(argv.pop(0))
