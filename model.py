@@ -116,7 +116,7 @@ class Model():
         self.out_src = tf.concat([output_src_fw, output_src_bw], axis=2)
         self.out_src = tf.nn.dropout(self.out_src, keep_prob=KEEP)
 
-        sys.stderr.write("Total src parameters: {}\n".format(sum(variable.get_shape().num_elements() for variable in tf.trainable_variables())))
+#        sys.stderr.write("Total src parameters: {}\n".format(sum(variable.get_shape().num_elements() for variable in tf.trainable_variables())))
 
         ###
         ### tgt-side
@@ -145,9 +145,9 @@ class Model():
         self.out_tgt = tf.concat([output_tgt_fw, output_tgt_bw], axis=2)
         self.out_tgt = tf.nn.dropout(self.out_tgt, keep_prob=KEEP)
 
-        sys.stderr.write("Total src/tgt parameters: {}\n".format(sum(variable.get_shape().num_elements() for variable in tf.trainable_variables())))
-        for variable in tf.trainable_variables():
-            sys.stderr.write("var {} params={}\n".format(variable,variable.get_shape().num_elements()))
+#        sys.stderr.write("Total src/tgt parameters: {}\n".format(sum(variable.get_shape().num_elements() for variable in tf.trainable_variables())))
+#        for variable in tf.trainable_variables():
+#            sys.stderr.write("var {} params={}\n".format(variable,variable.get_shape().num_elements()))
 
 
         # next is a tensor containing similarity distances (one for each sentence pair) using the last vectors
