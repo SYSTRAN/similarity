@@ -6,8 +6,10 @@ import sys
 import time
 from random import shuffle
 from collections import defaultdict
+
 reload(sys)
 sys.setdefaultencoding('utf8')
+
 
 class options():
 
@@ -20,12 +22,12 @@ class options():
         self.debug = False
         self.replace = None
         self.data = None
-        usage="""usage: {}
+        usage = """usage: {}
    -seq_size       INT : sentences larger than this number of src/tgt words are filtered out [50]
    -max_sents      INT : Consider this number of sentences per batch (0 for all) [0]
    -seed           INT : seed for randomness [1234]
    -shuffle            : shuffle data
-   -debug              : debug mode 
+   -debug              : debug mode
    -h                  : this help
 
 *  -data          FILE : training data
@@ -37,14 +39,21 @@ class options():
 
         while len(argv):
             tok = argv.pop(0)
-            if (tok=="-data" and len(argv)): self.data = argv.pop(0)
-            elif (tok=="-max_sents" and len(argv)): self.max_sents = int(argv.pop(0))
-            elif (tok=="-seq_size" and len(argv)): self.seq_size = int(argv.pop(0))
-            elif (tok=="-mode" and len(argv)):  self.mode = argv.pop(0)
-            elif (tok=="-debug"): self.debug = True
-            elif (tok=="-seed" and len(argv)): self.seed = int(argv.pop(0))
-            elif (tok=="-replace" and len(argv)): self.replace = argv.pop(0)
-            elif (tok=="-h"):
+            if (tok == "-data" and len(argv)):
+                self.data = argv.pop(0)
+            elif (tok == "-max_sents" and len(argv)):
+                self.max_sents = int(argv.pop(0))
+            elif (tok == "-seq_size" and len(argv)):
+                self.seq_size = int(argv.pop(0))
+            elif (tok == "-mode" and len(argv)):
+                self.mode = argv.pop(0)
+            elif (tok == "-debug"):
+                self.debug = True
+            elif (tok == "-seed" and len(argv)):
+                self.seed = int(argv.pop(0))
+            elif (tok == "-replace" and len(argv)):
+                self.replace = argv.pop(0)
+            elif (tok == "-h"):
                 sys.stderr.write("{}".format(usage))
                 sys.exit()
             else:
@@ -55,6 +64,7 @@ class options():
         if self.data is None:
             sys.stderr.write('error: missing -data optioon\n{}'.format(usage))
             sys.exit()
+
 
 class stats():
 
@@ -70,18 +80,26 @@ class stats():
         self.n_src_divergent = 0
         self.n_tgt_divergent = 0
 
-    def show(self,t):
-        sys.stderr.write("Built sentences: {} time: {:.3f} s\n".format(self.n_sents,t))
-        if self.n_parallel: sys.stderr.write("\t{} parallel ({:.2f}%)\n".format(self.n_parallel, 100.0*self.n_parallel/self.n_sents))
-        if self.n_uneven: sys.stderr.write("\t{} uneven ({:.2f}%)\n".format(self.n_uneven, 100.0*self.n_uneven/self.n_sents))
-        if self.n_insert: sys.stderr.write("\t{} insert ({:.2f}%)\n".format(self.n_insert, 100.0*self.n_insert/self.n_sents))
-        if self.n_replace: sys.stderr.write("\t{} replace ({:.2f}%)\n".format(self.n_replace, 100.0*self.n_replace/self.n_sents))
-        if self.n_delete: sys.stderr.write("\t{} delete ({:.2f}%)\n".format(self.n_delete, 100.0*self.n_delete/self.n_sents))
-        sys.stderr.write("words: {}/{} divergent: {}/{} ({:.2f}%/{:.2f}%)\n".format(self.n_src_words,self.n_tgt_words,self.n_src_divergent,self.n_tgt_divergent,100.0*self.n_src_divergent/self.n_src_words,100.0*self.n_tgt_divergent/self.n_tgt_words))
+    def show(self, t):
+        sys.stderr.write("Built sentences: {} time: {:.3f} s\n".format(self.n_sents, t))
+        if self.n_parallel:
+            sys.stderr.write("\t{} parallel ({:.2f}%)\n".format(self.n_parallel, 100.0*self.n_parallel/self.n_sents))
+        if self.n_uneven:
+            sys.stderr.write("\t{} uneven ({:.2f}%)\n".format(self.n_uneven, 100.0*self.n_uneven/self.n_sents))
+        if self.n_insert:
+            sys.stderr.write("\t{} insert ({:.2f}%)\n".format(self.n_insert, 100.0*self.n_insert/self.n_sents))
+        if self.n_replace:
+            sys.stderr.write("\t{} replace ({:.2f}%)\n".format(self.n_replace, 100.0*self.n_replace/self.n_sents))
+        if self.n_delete:
+            sys.stderr.write("\t{} delete ({:.2f}%)\n".format(self.n_delete, 100.0*self.n_delete/self.n_sents))
+        sys.stderr.write("words: {}/{} divergent: {}/{} ({:.2f}%/{:.2f}%)\n".format(
+            self.n_src_words, self.n_tgt_words, self.n_src_divergent, self.n_tgt_divergent,
+            100.0*self.n_src_divergent/self.n_src_words, 100.0*self.n_tgt_divergent/self.n_tgt_words))
+
 
 class align():
 
-    def __init__(self,src,tgt,ali):
+    def __init__(self, src, tgt, ali):
         self.s2t_minmax = [[None, None] for i in range(len(src))]
         self.t2s_minmax = [[None, None] for i in range(len(tgt))]
         for a in ali:
@@ -89,21 +107,27 @@ class align():
                 sys.stderr.write('warning: bad ali {}\n'.format(ali))
                 continue
             s, t = map(int, a.split('-'))
-            if s>=len(src) or t>=len(tgt):
-                sys.stderr.write('warning: ali {}-{} out of bounds\nsrc: {}\ntgt: {}\nali: {}\n'.format(s,t,src,tgt,ali))
-                continue                
+            if s >= len(src) or t >= len(tgt):
+                sys.stderr.write('warning: ali {}-{} out of bounds\nsrc: {}\ntgt: {}\nali: {}\n'.format(
+                    s, t, src, tgt, ali))
+                continue
             if self.s2t_minmax[s][0] is None:
                 self.s2t_minmax[s][0] = t
                 self.s2t_minmax[s][1] = t
             else:
-                if t < self.s2t_minmax[s][0]: self.s2t_minmax[s][0] = t
-                if t > self.s2t_minmax[s][1]: self.s2t_minmax[s][1] = t
+                if t < self.s2t_minmax[s][0]:
+                    self.s2t_minmax[s][0] = t
+                if t > self.s2t_minmax[s][1]:
+                    self.s2t_minmax[s][1] = t
             if self.t2s_minmax[t][0] is None:
                 self.t2s_minmax[t][0] = s
                 self.t2s_minmax[t][1] = s
             else:
-                if s < self.t2s_minmax[t][0]: self.t2s_minmax[t][0] = s
-                if s > self.t2s_minmax[t][1]: self.t2s_minmax[t][1] = s
+                if s < self.t2s_minmax[t][0]:
+                    self.t2s_minmax[t][0] = s
+                if s > self.t2s_minmax[t][1]:
+                    self.t2s_minmax[t][1] = s
+
 
 class replace():
 
@@ -111,13 +135,14 @@ class replace():
         self.max_length = -1
         self.min_length = -1
         self.pos_to_wrd = defaultdict(list)
-        if file is None: return
+        if file is None:
+            return
         t0 = time.time()
         with io.open(file, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
             nline = 0
             for line in f:
                 nline += 1
-                if nline==1:
+                if nline == 1:
                     tok = line.split(",")
                     self.min_length = int(tok[0])
                     self.max_length = int(tok[1])
@@ -128,18 +153,21 @@ class replace():
         t1 = time.time()
         sys.stderr.write('Read replace ({} pos entries) time: {:.3f} s\n'.format(len(self.pos_to_wrd),t1-t0))
 
-    def get(self,seq,pos):
-        seqpos = " ".join(pos) #string
-        if "-" in seqpos: return []
-        seqwrd = " ".join(seq) #string
-#        print("\tseqpos: {}".format(seqpos))
-        if not seqpos in self.pos_to_wrd: return []
-        seqwrds = self.pos_to_wrd[seqpos] #is a list of strings
+    def get(self, seq, pos):
+        seqpos = " ".join(pos)
+        if "-" in seqpos:
+            return []
+        seqwrd = " ".join(seq)
+        # print("\tseqpos: {}".format(seqpos))
+        if seqpos not in self.pos_to_wrd:
+            return []
+        # is a list of strings
+        seqwrds = self.pos_to_wrd[seqpos]
 
-        indexs = [i for i in range(min(100,len(seqwrds)))]
+        indexs = [i for i in range(min(100, len(seqwrds)))]
         shuffle(indexs)
         for i in indexs:
-            seqwrd2=seqwrds[i] #string
+            seqwrd2 = seqwrds[i] #string
 #            print("\t\ti={} {}".format(i,seqwrd2))
             seq2=seqwrd2.split(' ') #vector
             totally_different = True
@@ -189,8 +217,8 @@ class dataset():
             n_try += 1
             if n_try > self.max_ntry: return ### cannot find the right pair
             j = np.random.randint(0,len(self.SRC))
-            if j==i: continue
-            if i%2==0:
+            if j == i: continue
+            if i%2 == 0:
                 src = list(self.SRC[j]) ### replace src
                 tgt = list(self.TGT[i])
             else:
@@ -224,13 +252,13 @@ class dataset():
                 n_try += 1
                 if n_try > self.max_ntry: return ### cannot find the right pair
                 j = np.random.randint(0,len(self.SRC))
-                if j==i: continue
+                if j == i: continue
                 add = list(self.SRC[j]) ### replace src
                 new_src = len(src)+len(add)
                 if new_src>len(tgt) and new_src>len(tgt)*2 : continue 
                 if len(tgt)>new_src and len(tgt)>new_src*2 : continue 
                 break
-            if i%2==0: ### add in the begining
+            if i%2 == 0: ### add in the begining
                 where="src:begin"
                 for k in range(len(add)):
                     src.insert(0,add[len(add)-k-1])
@@ -247,13 +275,13 @@ class dataset():
                 n_try += 1
                 if n_try > self.max_ntry: return ### cannot find the right pair
                 j = np.random.randint(0,len(self.SRC))
-                if j==i: continue
+                if j == i: continue
                 add = list(self.TGT[j]) ### replace tgt
                 new_tgt = len(tgt)+len(add)
                 if len(src)>new_tgt and len(src)>new_tgt*2 : continue 
                 if new_tgt>len(src) and new_tgt>len(src)*2 : continue 
                 break
-            if i%2==0: ### add in the begining
+            if i%2 == 0: ### add in the begining
                 where="tgt:begin"
                 for k in range(len(add)):
                     tgt.insert(0,add[len(add)-k-1])
@@ -274,7 +302,7 @@ class dataset():
         return
 
     def delete_pair(self,i,st,o):
-        if len(self.ALI)==0: return
+        if len(self.ALI) == 0: return
         src_orig = list(self.SRC[i])
         tgt_orig = list(self.TGT[i])
         ali = list(self.ALI[i])
@@ -339,9 +367,9 @@ class dataset():
         return
 
     def replace_pair(self,i,st,o):
-        if self.r.max_length==-1: return
-        if len(self.ALI)==0: return
-        if len(self.POS)==0: return
+        if self.r.max_length == -1: return
+        if len(self.ALI) == 0: return
+        if len(self.POS) == 0: return
         src = list(self.SRC[i])
         tgt = list(self.TGT[i])
         ali = list(self.ALI[i])
@@ -349,9 +377,9 @@ class dataset():
         if len(src)<3: return
 
         src_from, src_to, tgt_from, tgt_to, replace_by = self.find_replacement(src, tgt, ali, pos)
-        if len(replace_by)==0: return
+        if len(replace_by) == 0: return
         if src_from<0 or src_to<src_from or src_to>=len(src): return
-        if src_from==0 and src_to==len(src)-1: return
+        if src_from == 0 and src_to == len(src)-1: return
 
         replace_orig = " ".join([src[s] for s in range(src_from,src_to+1)])
         replace_dest = " ".join(replace_by)
@@ -389,7 +417,7 @@ class dataset():
     def find_replacement(self,src,tgt,ali,pos):
         if len(src) < self.r.min_length*2:
             return -1, -1, -1, -1, []
-        if len(ali)==0: ### there must be at leat one alignment
+        if len(ali) == 0: ### there must be at leat one alignment
             return -1, -1, -1, -1, []
         if len(pos)!=len(src): 
             return -1, -1, -1, -1, []
@@ -472,8 +500,8 @@ class dataset():
         #extend with unaligned words ???
         #filter bad examples: all words, too many tokens, etc.
         #max_ratio = 0.5 #maximum ratio of deleted words
-        #if jmin==0 and jmax==len(src)-1: return -1, -1, -1, -1
-        #if imin==0 and imax==len(tgt)-1: return -1, -1, -1, -1
+        #if jmin == 0 and jmax == len(src)-1: return -1, -1, -1, -1
+        #if imin == 0 and imax == len(tgt)-1: return -1, -1, -1, -1
         #if ((imax-imin+1) + (jmax-jmin+1))/(len(src)+len(tgt)) > max_ratio: return -1, -1, -1, -1
         return jmin,jmax,imin,imax
 
@@ -502,8 +530,8 @@ def main():
         n_tgt_prune = 0
         for line in f:
             n_total += 1
-            if n_total%100000==0:
-                if n_total%1000000==0: sys.stderr.write(str(n_total))
+            if n_total%100000 == 0:
+                if n_total%1000000 == 0: sys.stderr.write(str(n_total))
                 else: sys.stderr.write(".")
             i += 1
             tok = line.strip('\n').split("\t")
@@ -525,7 +553,7 @@ def main():
                 continue
             if len(tok)>0:
                 ali = tok.pop(0).strip().split(' ')
-                if len(ali)==0:
+                if len(ali) == 0:
                     sys.stderr.write('warning: empty alignments in line {} [skipping line]\n'.format(i))
                     continue
             if len(tok)>0:

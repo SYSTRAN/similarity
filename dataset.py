@@ -8,6 +8,8 @@ import sys
 import time
 import gzip
 from collections import defaultdict
+from tokenizer import build_tokenizer
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -93,12 +95,14 @@ class Vocab():
         if s not in self.tok_to_idx: return idx_unk
         return self.tok_to_idx[s]
 
+
 class Dataset():
 
-    def __init__(self, file, voc_src, voc_tgt, seq_size, max_sents, do_shuffle):
-        if file is None: return
-        self.voc_src = voc_src 
-        self.voc_tgt = voc_tgt 
+    def __init__(self, file, voc_src, tok_src, voc_tgt, tok_tgt, seq_size, max_sents, do_shuffle):
+        if file is None:
+            return
+        self.voc_src = voc_src
+        self.voc_tgt = voc_tgt
         self.file = file
         self.seq_size = seq_size
         self.max_sents = max_sents
@@ -107,21 +111,37 @@ class Dataset():
         self.data = []
         self.length = 0 ### length of the data set to be used (not necessarily the whole set)
 
-#        with io.open(self.file, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
-        if self.file.endswith('.gz'): f = gzip.open(self.file, 'rb')
-        else: f = io.open(self.file, 'r', encoding='utf-8', newline='\n', errors='ignore')
+        src_tokenizer = None
+        tgt_tokenizer = None
+        if tok_src:
+            src_tokenizer = build_tokenizer(tok_src)
+        if tok_tgt:
+            tgt_tokenizer = build_tokenizer(tok_tgt)
+
+        if self.file.endswith('.gz'):
+            f = gzip.open(self.file, 'rb')
+        else:
+            f = io.open(self.file, 'r', encoding='utf-8', newline='\n', errors='ignore')
         firstline = True
-        for line in f: 
+        for line in f:
+            lsplit = line.split('\t')
             if firstline:
-                if len(line.split('\t'))==4: self.annotated = True
+                if len(lsplit) == 4:
+                    self.annotated = True
                 firstline = False
-            self.data.append(line)
+            if src_tokenizer:
+                tokens, _ = src_tokenizer.tokenize(str(lsplit[0]))
+                lsplit[0] = " ".join(tokens)
+            if tgt_tokenizer:
+                tokens, _ = tgt_tokenizer.tokenize(str(lsplit[1]))
+                lsplit[1] = " ".join(tokens)
+            self.data.append("\t".join(lsplit))
             self.length += 1
         f.close()
 
         if self.max_sents > 0:
-            self.length = min(self.length,self.max_sents) 
-        sys.stderr.write('({} contains {} examples)\n'.format(self.file,len(self.data)))
+            self.length = min(self.length, self.max_sents)
+        sys.stderr.write('({} contains {} examples)\n'.format(self.file, len(self.data)))
 
     def __iter__(self):
         nsent = 0
@@ -133,7 +153,8 @@ class Dataset():
         self.ndiv_tgt = 0
         ### every iteration i get shuffled data examples if do_shuffle
         indexs = [i for i in range(len(self.data))]
-        if self.do_shuffle: shuffle(indexs)
+        if self.do_shuffle:
+            shuffle(indexs)
         for index in indexs:
             tokens = self.data[index].strip().split('\t')
             if len(tokens) != 2 and len(tokens) != 4:
@@ -152,7 +173,7 @@ class Dataset():
                 if len(tgt_tag_txt)!=len(tgt) or len(src_tag_txt)!=len(src):
                     sys.stderr.write("warning: diff num of words/tags \'{}\' in line={} [skipped]\n".format(self.data[index],index+1))
                     continue
-                
+
             isrc, itgt, src_tag, tgt_tag = self.build_example(src,tgt,src_tag_txt,tgt_tag_txt)
             self.keep_records(src_tag, tgt_tag, isrc, itgt)
             yield isrc, itgt, src, tgt, src_tag, tgt_tag
@@ -241,6 +262,5 @@ def build_batch(SRC, TGT, RAW_SRC, RAW_TGT, SRC_TAG, TGT_TAG, max_src, max_tgt):
         len_src_batch.append(len_src)
         len_tgt_batch.append(len_tgt)
 
-    return src_batch, tgt_batch, raw_src_batch, raw_tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, len_src_batch, len_tgt_batch
-
-
+    return src_batch, tgt_batch, raw_src_batch, raw_tgt_batch, sign_src_batch, sign_tgt_batch, sign_batch, \
+        len_src_batch, len_tgt_batch

@@ -435,13 +435,15 @@ class Model():
         self.sess = tf.Session()
         self.saver = tf.train.Saver(max_to_keep=20)
 
-        if self.config.epoch is not None: ### restore a file for testing
-            fmodel = self.config.mdir + '/epoch' + self.config.epoch
+        if self.config.epoch is not None:
+            ### restore a file for testing
+            fmodel = '{}/epoch{}'.format(self.config.mdir, self.config.epoch)
             sys.stderr.write("Restoring model: {}\n".format(fmodel))
             self.saver.restore(self.sess, fmodel)
             return
 
-        if self.config.mdir: ### initialize for training or restore previous
+        if self.config.mdir:
+            ### initialize for training or restore previous
             if not os.path.exists(self.config.mdir + '/checkpoint'): 
                 sys.stderr.write("Initializing model\n")
                 self.sess.run(tf.global_variables_initializer())
