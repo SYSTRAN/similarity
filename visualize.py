@@ -22,7 +22,7 @@ class Visualize():
 
 
     def print_matrix(self, aggr_src, aggr_tgt, align):
-        print('<:::{}:::> cosine sim = {:.4f}'.format(n_sents, sim))
+        print('<:::{}:::> cosine sim = {:.4f}'.format(self.n_sents, self.sim))
         source = list(self.src)
         target = list(self.tgt)
         for s in range(len(source)):
