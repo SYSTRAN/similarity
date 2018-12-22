@@ -104,25 +104,26 @@ class Visualize():
         print("<text x=\"{}\" y=\"10\" fill=\"black\" font-family=\"Courier\" font-size=\"8\"\">{:+.4f}</text>".format(
             start_x, self.sim))
 
-    def print_vectors(self, last_src, last_tgt, aggr_src, aggr_tgt, align):
+    def print_vectors(self, last_src, last_tgt, aggr_src, aggr_tgt, align, quiet=False):
         line = []
         line.append("{:.4f}".format(self.sim))
-        line.append(" ".join(s for s in self.src))
-        line.append(" ".join(t for t in self.tgt))
+        if not quiet:
+            line.append(" ".join(s for s in self.src))
+            line.append(" ".join(t for t in self.tgt))
 
-        if len(last_src) and len(last_tgt):
-            line.append(" ".join("{:.4f}".format(s) for s in last_src))
-            line.append(" ".join("{:.4f}".format(t) for t in last_tgt))
+            if len(last_src) and len(last_tgt):
+                line.append(" ".join("{:.4f}".format(s) for s in last_src))
+                line.append(" ".join("{:.4f}".format(t) for t in last_tgt))
 
-        if len(aggr_src) and len(aggr_tgt):
-            line.append(" ".join("{:.4f}".format(s) for s in aggr_src))
-            line.append(" ".join("{:.4f}".format(t) for t in aggr_tgt))
+            if len(aggr_src) and len(aggr_tgt):
+                line.append(" ".join("{:.4f}".format(s) for s in aggr_src))
+                line.append(" ".join("{:.4f}".format(t) for t in aggr_tgt))
 
-        if len(align):
-            matrix = []
-            for s in range(len(self.src)):
-                row = " ".join("{:.4f}".format(align[s, t]) for t in range(len(self.tgt)))
-                matrix.append(row)
-            line.append("\t".join(row for row in matrix))
+            if len(align):
+                matrix = []
+                for s in range(len(self.src)):
+                    row = " ".join("{:.4f}".format(align[s, t]) for t in range(len(self.tgt)))
+                    matrix.append(row)
+                line.append("\t".join(row for row in matrix))
 
         print "\t".join(line)

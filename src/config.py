@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import tensorflow as tf
 import numpy as np
 import io
@@ -6,7 +7,7 @@ import os
 import sys
 import json
 from shutil import copyfile
-from dataset import Vocab, Embeddings
+from dataset import Vocab, Embeddings, check_dataset
 
 
 class Config():
@@ -55,6 +56,7 @@ class Config():
  [INFERENCE OPTIONS]
    -epoch          INT : epoch to use (mdir]/epoch[epoch], by default the latest one in mdir)
 *  -tst           FILE : testing data
+   -q                  : just output similarity score
    -show_matrix        : output formatted alignment matrix (mode must be alignment)
    -show_svg           : output alignment matrix using svg-like html format (mode must be alignment)
    -show_align         : output source/target alignment matrix (mode must be alignment)
@@ -108,6 +110,7 @@ class Config():
         self.debug = False
         self.mode = "alignment"
 
+        self.quiet = False
         self.show_matrix = False
         self.show_svg = False
         self.show_last = False
@@ -147,9 +150,7 @@ class Config():
             if not self.epoch:
                 sys.stderr.write("error: Cannot find epoch in mdir '{}'\n{}".format(self.mdir, self.usage))
                 sys.exit()
-        if not os.path.exists(self.tst):
-            sys.stderr.write('error: -tst file {} cannot be find\n'.format(self.tst))
-            sys.exit()
+        check_dataset(self.tst)
         if not os.path.exists('{}/epoch{}.index'.format(self.mdir, self.epoch)):
             sys.stderr.write('error: -epoch file {}/epoch{}.index cannot be find\n'.format(self.mdir, self.epoch))
             sys.exit()
@@ -191,12 +192,9 @@ class Config():
         return
 
     def learn(self):
-        if not os.path.exists(self.trn):
-            sys.stderr.write('error: -trn file {} cannot be find\n'.format(self.trn))
-            sys.exit()
-        if self.dev is not None and not os.path.exists(self.dev):
-            sys.stderr.write('error: -dev file {} cannot be find\n'.format(self.dev))
-            sys.exit()
+        check_dataset(self.trn)
+        if self.dev is not None:
+            check_dataset(self.dev)
 
         ###
         #  continuation
@@ -389,18 +387,20 @@ class Config():
             elif (tok == "-mode" and len(argv)):
                 self.mode = argv.pop(0)
 
-            elif (tok == "-show_matrix"):
+            elif tok == "-q":
+                self.quiet = True
+            elif tok == "-show_matrix":
                 self.show_matrix = True
-            elif (tok == "-show_svg"):
+            elif tok == "-show_svg":
                 self.show_svg = True
-            elif (tok == "-show_aggr"):
+            elif tok == "-show_aggr":
                 self.show_aggr = True
-            elif (tok == "-show_last"):
+            elif tok == "-show_last":
                 self.show_last = True
-            elif (tok == "-show_align"):
+            elif tok == "-show_align":
                 self.show_align = True
 
-            elif (tok == "-h"):
+            elif tok == "-h":
                 sys.stderr.write("{}".format(self.usage))
                 sys.exit()
 

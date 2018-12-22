@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import os.path
 import io
 from math import *
@@ -105,14 +106,25 @@ class Vocab():
         return self.tok_to_idx[s]
 
 
+def check_dataset(filepath):
+    """file is either multi-column file, or a collection of files comma-aligned"""
+    files = filepath.split(",")
+    assert len(files) == 1 or len(files) == 2 or len(files) == 4, "invalid number of files in dataset"
+    for file in files:
+        if not os.path.exists(file):
+            sys.stderr.write('error: file `{}` cannot be found\n'.format(file))
+            sys.exit()
+    return True
+
+
 class Dataset():
 
-    def __init__(self, file, voc_src, tok_src, voc_tgt, tok_tgt, seq_size, max_sents, do_shuffle):
-        if file is None:
+    def __init__(self, filepath, voc_src, tok_src, voc_tgt, tok_tgt, seq_size, max_sents, do_shuffle):
+        if filepath is None:
             return
         self.voc_src = voc_src
         self.voc_tgt = voc_tgt
-        self.file = file
+        self.files = filepath.split(",")
         self.seq_size = seq_size
         self.max_sents = max_sents
         self.do_shuffle = do_shuffle
@@ -128,17 +140,35 @@ class Dataset():
         if tok_tgt:
             tgt_tokenizer = build_tokenizer(tok_tgt)
 
-        if self.file.endswith('.gz'):
-            f = gzip.open(self.file, 'rb')
-        else:
-            f = io.open(self.file, 'r', encoding='utf-8', newline='\n', errors='ignore')
+        # file handlers
+        fhs = []
+        for file in self.files:
+            if file.endswith('.gz'):
+                fh.append(gzip.open(file, 'rb'))
+            else:
+                fhs.append(io.open(file, 'r', encoding='utf-8', newline='\n', errors='ignore'))
+
         firstline = True
-        for line in f:
-            lsplit = line.split('\t')
+        count_column = None
+        idx = 0
+        for line in fhs[0]:
+            idx += 1
+            if len(fhs) > 1:
+                # read from multiple files
+                lsplit = [line]
+                for fh in fhs[1:]:
+                    lsplit.append(fh.readline().strip())
+            else:
+                # or for one single file
+                lsplit = line.split('\t')
             if firstline:
+                assert len(lsplit) >= 2 and len(lsplit) <= 4, "invalid column count in {}".format(filepath)
+                count_column = len(lsplit)
                 if len(lsplit) == 4:
                     self.annotated = True
                 firstline = False
+            else:
+                assert len(lsplit) == count_column, "invalid column count in {}, line {}".format(filepath, idx)
             if src_tokenizer:
                 tokens, _ = src_tokenizer.tokenize(str(lsplit[0]))
                 lsplit[0] = " ".join(tokens)
@@ -147,11 +177,10 @@ class Dataset():
                 lsplit[1] = " ".join(tokens)
             self.data.append("\t".join(lsplit))
             self.length += 1
-        f.close()
 
         if self.max_sents > 0:
             self.length = min(self.length, self.max_sents)
-        sys.stderr.write('({} contains {} examples)\n'.format(self.file, len(self.data)))
+        sys.stderr.write('({} contains {} examples)\n'.format(filepath, len(self.data)))
 
     def __iter__(self):
         nsent = 0

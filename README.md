@@ -65,13 +65,15 @@ python -u src/build_data.py
 
 + Options marked with * must be set. The rest have default values.
 ```
-The input data file contains one sentence pair per line, with the next fields separated by TABs:
+The input data file contains one sentence pair per line, with the following fields separated by TABs:
 * source sentence
 * target sentence
 * source/target alignments
 * source part-of-speeches
 
  <pre>Why wait for the Euro ?   Pourquoi attendre l' Euro ?   0-0 1-1 2-1 3-2 4-3 5-4   WRB VB IN DT NNP .</pre>
+
+alternatively, if data path can be multiple files separated by comma.
 
 (The last two fields are optional)
 
@@ -147,6 +149,7 @@ python -u src/similarity.py
  [INFERENCE OPTIONS]
    -epoch          INT : epoch to use ([mdir]/epoch[epoch] must exist, by default the latest one in mdir)
 *  -tst           FILE : testing data
+   -q                  : quiet mode, just output similarity score
    -show_matrix        : output formatted alignment matrix (mode must be alignment)
    -show_svg           : output alignment matrix using svg-like html format (mode must be alignment)
    -show_align         : output source/target alignment matrix (mode must be alignment)

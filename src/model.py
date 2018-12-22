@@ -447,7 +447,7 @@ class Model():
 ### inference #####
 ###################
 
-    def inference(self, tst):
+    def inference(self, tst, quiet=False):
 
         if self.config.show_svg:
             print "<html>\n<body>"
@@ -472,7 +472,7 @@ class Model():
                     if self.config.show_last:
                         last_src = last_src_batch[i_sent]
                         last_tgt = last_tgt_batch[i_sent]
-                    v.print_vectors(last_src, last_tgt, aggr_src=[], aggr_tgt=[], align=[])
+                    v.print_vectors(last_src, last_tgt, aggr_src=[], aggr_tgt=[], align=[], quiet=quiet)
             else:
                 align_batch, aggr_src_batch, aggr_tgt_batch, out_src_batch, out_tgt_batch, last_src_batch, \
                     last_tgt_batch, sim_batch = self.sess.run([self.align, self.aggregation_src,
@@ -503,7 +503,7 @@ class Model():
                             aggr_tgt = aggr_tgt_batch[i_sent]
                         if self.config.show_align:
                             align = align_batch[i_sent]
-                        v.print_vectors(last_src, last_tgt, aggr_src, aggr_tgt, align)
+                        v.print_vectors(last_src, last_tgt, aggr_src, aggr_tgt, align, quiet=quiet)
 
         if tst.annotated:
             score.update()
