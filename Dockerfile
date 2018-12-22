@@ -22,6 +22,6 @@ ADD requirements.txt /root
 
 RUN pip --no-cache-dir install -r /root/requirements.txt
 
-ADD similarity.py dataset.py config.py model.py visualize.py tokenizer.py /root/
+ADD src/similarity.py src/dataset.py src/config.py src/model.py src/visualize.py src/tokenizer.py /root/
 
 ENTRYPOINT ["python", "similarity.py"]

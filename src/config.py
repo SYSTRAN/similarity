@@ -25,9 +25,9 @@ class Config():
 *  -trn           FILE : training data
    -dev           FILE : validation data
 
-   -src_tok       FILE : if provided, json tokenization options for onmt tokenization, contains vocabulary
+   -src_tok       FILE : if provided, json tokenization options for onmt tokenization, points to vocabulary file
    -src_voc       FILE : vocabulary of src words (needed to initialize learning)
-   -tgt_tok       FILE : if provided, json tokenization options for onmt tokenization, contains vocabulary
+   -tgt_tok       FILE : if provided, json tokenization options for onmt tokenization, points to vocabulary file
    -tgt_voc       FILE : vocabulary of tgt words (needed to initialize learning)
    -src_emb       FILE : embeddings of src words (needed to initialize learning)
    -tgt_emb       FILE : embeddings of tgt words (needed to initialize learning)
@@ -53,7 +53,7 @@ class Config():
    -report_every   INT : report every this many batches [1000]
 
  [INFERENCE OPTIONS]
-   -epoch          INT : epoch to use (by default the latest one)
+   -epoch          INT : epoch to use (mdir]/epoch[epoch], by default the latest one in mdir)
 *  -tst           FILE : testing data
    -show_matrix        : output formatted alignment matrix (mode must be alignment)
    -show_svg           : output alignment matrix using svg-like html format (mode must be alignment)

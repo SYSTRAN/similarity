@@ -51,7 +51,7 @@ To generate some training examples we will need to perform word alignments and P
 Once the training parallel corpora is preprocessed we are ready to prepare our training examples:
 
 ```
-python -u build_data.py
+python -u src/build_data.py
    -seq_size       INT : sentences larger than this number of src/tgt words are filtered out [50]
    -max_sents      INT : Consider this number of sentences per batch (0 for all) [0]
    -seed           INT : seed for randomness [1234]
@@ -102,7 +102,7 @@ Available modes:
 
 # Learning
 ```
-python -u similarity.py
+python -u src/similarity.py
    -mdir          FILE : directory to save/restore models [/root/model]
    -seq_size       INT : sentences larger than this number of src/tgt words are filtered out [50]
    -batch_size     INT : number of examples per batch [32]
@@ -139,7 +139,7 @@ python -u similarity.py
 
 # Inference
 ```
-python -u similarity.py
+python -u src/similarity.py
 *  -mdir          FILE : directory to save/restore models
    -batch_size     INT : number of examples per batch [32]
    -seed           INT : seed for randomness [1234]
@@ -170,5 +170,5 @@ If files `tokenization_src.json` or `tokenization_tgt.json` are found in the mod
 # Fixing sentence pairs
 
 ```
-python -u ./fix.py [-tau INT] [-nbest INT] [-max_sim FLOAT] [-use_punct] < FILE_WITH_ALIGNMENTS
+python -u src/fix.py [-tau INT] [-nbest INT] [-max_sim FLOAT] [-use_punct] < FILE_WITH_ALIGNMENTS
 ```
