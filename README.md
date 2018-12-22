@@ -25,7 +25,7 @@ In the previous paper we show that divergent sentences can be filtered out (usin
 pip install requirements.txt
 ```
 
-A docker can also be built with all requirements with:
+A docker can also be built integrating all requirements with:
 
 ```
 docker build -t systran/similarity -f Dockerfile .
