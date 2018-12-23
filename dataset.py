@@ -24,7 +24,7 @@ class Embeddings():
         if file is not None:
             #with io.open(file, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
             if file.endswith('.gz'): f = gzip.open(file, 'rb')
-            else: f = io.open(file, 'r', encoding='utf-8', newline='\n', errors='ignore')
+            else: f = io.open(file, 'rb')
 
             self.num, self.dim = map(int, f.readline().split())
             i = 0
@@ -109,7 +109,7 @@ class Dataset():
 
 #        with io.open(self.file, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
         if self.file.endswith('.gz'): f = gzip.open(self.file, 'rb')
-        else: f = io.open(self.file, 'r', encoding='utf-8', newline='\n', errors='ignore')
+        else: f = io.open(self.file, 'rb')
         firstline = True
         for line in f: 
             if firstline:
