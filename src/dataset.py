@@ -26,10 +26,11 @@ class Embeddings():
     def __init__(self, file, voc, length):
         w2e = {}
         if file is not None:
+
             if file.endswith('.gz'):
                 f = gzip.open(file, 'rb')
             else:
-                f = io.open(file, 'r', encoding='utf-8', newline='\n', errors='ignore')
+                f = open(file, 'rb')
 
             self.num, self.dim = map(int, f.readline().split())
             i = 0
@@ -146,7 +147,7 @@ class Dataset():
             if file.endswith('.gz'):
                 fh.append(gzip.open(file, 'rb'))
             else:
-                fhs.append(io.open(file, 'r', encoding='utf-8', newline='\n', errors='ignore'))
+                fhs.append(open(file, 'rb'))
 
         firstline = True
         count_column = None
