@@ -56,14 +56,14 @@ class Config():
  [INFERENCE OPTIONS]
    -epoch          INT : epoch to use (mdir]/epoch[epoch], by default the latest one in mdir)
 *  -tst           FILE : testing data
-   -q                  : just output similarity score
+   -q                  : quiet mode, just output similarity score
    -show_matrix        : output formatted alignment matrix (mode must be alignment)
    -show_svg           : output alignment matrix using svg-like html format (mode must be alignment)
    -show_align         : output source/target alignment matrix (mode must be alignment)
    -show_last          : output source/target last vectors
    -show_aggr          : output source/target aggr vectors
 
-+ Options marked with * must be set. The rest have default values.
++ Options marked with * must be set. The other ones have default values.
 + If -mdir exists in learning mode, learning continues after restoring the last model
 + Training data is shuffled at every epoch
 + -show_last, -show_aggr and -show_align can be used at the same time

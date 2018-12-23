@@ -35,7 +35,7 @@ class options():
    -mode        STRING : how data examples are generated (p: parallel, u:uneven, i:insert, r:replace d:delete) [p]
    -replace       FILE : equivalent sequences (needed when -data_mode contains r)
 
-- Options marked with * must be set. The rest have default values.
+- Options marked with * must be set. The other ones have default values.
 """.format(argv.pop(0))
 
         while len(argv):
