@@ -67,7 +67,7 @@ class Config():
 + If -mdir exists in learning mode, learning continues after restoring the last model
 + Training data is shuffled at every epoch
 + -show_last, -show_aggr and -show_align can be used at the same time
-""".format(sys.argv.pop(0))
+""".format(argv.pop(0))
 
         self.src_voc = None
         self.src_tok = None
@@ -117,7 +117,7 @@ class Config():
         self.show_aggr = False
         self.show_align = False
 
-        self.parse(sys.argv)
+        self.parse(argv)
 
         tf.set_random_seed(self.seed)
         np.random.seed(self.seed)
