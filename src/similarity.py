@@ -11,8 +11,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 tf.logging.set_verbosity(tf.logging.ERROR)
 
 
-def main():
-    config = Config(sys.argv)
+def main(args):
+    config = Config(args)
     model = Model(config)
     model.build_graph()
     model.initialize_session()
@@ -32,4 +32,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)
