@@ -105,7 +105,7 @@ Available modes:
 # Learning
 ```
 python -u src/similarity.py
-   -mdir          FILE : directory to save/restore models [/root/model]
+*  -mdir          FILE : directory to save/restore models
    -seq_size       INT : sentences larger than this number of src/tgt words are filtered out [50]
    -batch_size     INT : number of examples per batch [32]
    -seed           INT : seed for randomness [1234]

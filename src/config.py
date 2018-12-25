@@ -14,7 +14,7 @@ class Config():
 
     def __init__(self, argv):
         self.usage = """usage: {}
-   -mdir          FILE : directory to save/restore models [/root/model]
+*  -mdir          FILE : directory to save/restore models
 
    -seq_size       INT : sentences larger than this number of src/tgt words are filtered out [50]
    -batch_size     INT : number of examples per batch [32]
@@ -80,7 +80,7 @@ class Config():
         self.tgt_voc_size = None
         self.src_emb_size = None
         self.tgt_emb_size = None
-        self.mdir = '/root/model'
+        self.mdir = None
         self.epoch = None
         self.trn = None
         self.dev = None
