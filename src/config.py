@@ -56,6 +56,7 @@ class Config():
  [INFERENCE OPTIONS]
    -epoch          INT : epoch to use (mdir]/epoch[epoch], by default the latest one in mdir)
 *  -tst           FILE : testing data
+   -output        FILE : output file [- by default is STDOUT]
    -q                  : quiet mode, just output similarity score
    -show_matrix        : output formatted alignment matrix (mode must be alignment)
    -show_svg           : output alignment matrix using svg-like html format (mode must be alignment)
@@ -84,6 +85,7 @@ class Config():
         self.trn = None
         self.dev = None
         self.tst = None
+        self.output = '-'
         self.emb_src = None
         self.emb_tgt = None
 
@@ -151,6 +153,10 @@ class Config():
                 sys.stderr.write("error: Cannot find epoch in mdir '{}'\n{}".format(self.mdir, self.usage))
                 sys.exit()
         check_dataset(self.tst)
+        if self.output == '-':
+            self.output = sys.stdout
+        else:
+            self.output = open(self.output, "wb")
         if not os.path.exists('{}/epoch{}.index'.format(self.mdir, self.epoch)):
             sys.stderr.write('error: -epoch file {}/epoch{}.index cannot be find\n'.format(self.mdir, self.epoch))
             sys.exit()
@@ -349,6 +355,8 @@ class Config():
                 self.dev = argv.pop(0)
             elif (tok == "-tst" and len(argv)):
                 self.tst = argv.pop(0)
+            elif (tok == "-output" and len(argv)):
+                self.output = argv.pop(0)
             elif (tok == "-max_sents" and len(argv)):
                 self.max_sents = int(argv.pop(0))
             elif (tok == "-debug"):

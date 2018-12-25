@@ -447,10 +447,10 @@ class Model():
 ### inference #####
 ###################
 
-    def inference(self, tst, quiet=False):
+    def inference(self, tst, output, quiet=False):
 
         if self.config.show_svg:
-            print "<html>\n<body>"
+            output.write("<html>\n<body>\n")
         nbatches = (len(tst) + self.config.batch_size - 1) // self.config.batch_size
         score = Score()
         n_sents = 0
@@ -466,7 +466,7 @@ class Model():
                     score.add_batch(out_batch, sign_batch)
                 for i_sent in range(len(out_batch)):
                     n_sents += 1
-                    v = Visualize(n_sents, raw_src_batch[i_sent], raw_tgt_batch[i_sent], out_batch[i_sent])
+                    v = Visualize(output, n_sents, raw_src_batch[i_sent], raw_tgt_batch[i_sent], out_batch[i_sent])
                     last_src = []
                     last_tgt = []
                     if self.config.show_last:
@@ -484,7 +484,7 @@ class Model():
                     score.add_batch_tokens(aggr_tgt_batch, sign_tgt_batch, len_tgt_batch)
                 for i_sent in range(len(align_batch)):
                     n_sents += 1
-                    v = Visualize(n_sents, raw_src_batch[i_sent], raw_tgt_batch[i_sent], sim_batch[i_sent])
+                    v = Visualize(output, n_sents, raw_src_batch[i_sent], raw_tgt_batch[i_sent], sim_batch[i_sent])
                     if self.config.show_svg:
                         v.print_svg(aggr_src_batch[i_sent], aggr_tgt_batch[i_sent], align_batch[i_sent])
                     elif self.config.show_matrix:
@@ -511,13 +511,13 @@ class Model():
             unk_t = float(100) * tst.nunk_tgt / tst.ntgt
             div_s = float(100) * tst.ndiv_src / tst.nsrc
             div_t = float(100) * tst.ndiv_tgt / tst.ntgt
-            sys.stdout.write('TEST words={}/{} %div={:.2f}/{:.2f} %unk={:.2f}/{:.2f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})'
+            sys.stderr.write('TEST words={}/{} %div={:.2f}/{:.2f} %unk={:.2f}/{:.2f} (A{:.4f},P{:.4f},R{:.4f},F{:.4f})'
                              ' (TP:{},TN:{},FP:{},FN:{})\n'.format(
                                     tst.nsrc, tst.ntgt, div_s, div_t, unk_s, unk_t, score.A, score.P, score.R, score.F,
                                     score.TP, score.TN, score.FP, score.FN))
 
         if self.config.show_svg:
-            print "</body>\n</html>"
+            output.write("</body>\n</html>\n")
 
 
 ###################

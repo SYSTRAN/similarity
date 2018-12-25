@@ -149,6 +149,7 @@ python -u src/similarity.py
  [INFERENCE OPTIONS]
    -epoch          INT : epoch to use ([mdir]/epoch[epoch] must exist, by default the latest one in mdir)
 *  -tst           FILE : testing data
+   -output        FILE : output file [- by default is STDOUT]
    -q                  : quiet mode, just output similarity score
    -show_matrix        : output formatted alignment matrix (mode must be alignment)
    -show_svg           : output alignment matrix using svg-like html format (mode must be alignment)

@@ -26,7 +26,7 @@ def main(args):
     if config.tst:
         tst = Dataset(config.tst, config.voc_src, config.tok_src, config.voc_tgt, config.tok_tgt,
                       seq_size=0, max_sents=0, do_shuffle=False)
-        model.inference(tst, quiet=config.quiet)
+        model.inference(tst, config.output, quiet=config.quiet)
 
     model.close_session()
 
