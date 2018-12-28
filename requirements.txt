@@ -1,0 +1,2 @@
+pyonmttok==1.*
+tensorflow-gpu==1.11.0
