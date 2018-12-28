@@ -12,10 +12,6 @@ for line in sys.stdin:
         nwords += 1
         Freq[word] += 1
 
-sys.stderr.write("#lines={} #words={} vocab={}\n".format(nlines,nwords,len(Freq)))
-for wrd,frq in sorted(Freq.items(), key=lambda(k,v): v, reverse=True): 
+sys.stderr.write("#lines={} #words={} vocab={}\n".format(nlines, nwords, len(Freq)))
+for wrd, frq in sorted(Freq.items(), key=lambda(k, v): v, reverse=True):
     print("{}".format(wrd))
-
-
-
-

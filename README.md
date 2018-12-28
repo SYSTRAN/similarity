@@ -19,9 +19,22 @@ As it can be seen, the model outputs:
 
 In the previous paper we show that divergent sentences can be filtered out (using the sentence similarity score) and that some divergences can be fixed (following alignment scores), guiding in both cases to outperform accuracy when compared to neural MT systems using the original corpora. For our experiments we used the English-French [OpenSubtitles](http://www.lrec-conf.org/proceedings/lrec2016/pdf/947_Paper.pdf) and the English-German [Paracrawl](http://paracrawl.eu/) corpora.
 
+# Installation
+
+```
+pip install requirements.txt
+```
+
+A docker can also be built integrating all requirements with:
+
+```
+docker build -t systran/similarity -f Dockerfile .
+```
+
+
 # Preprocess
 
-In order to learn our similarity model we better preprocess our training data with any tokenisation toolkit, basically aiming at reducing the vocabulary size. Any subtokenisation toolkit (such as BPE) can also be used. In our experiments we used the default tokenisation scheme implemented in [OpenNMT](http://opennmt.net) performing minimal tokenisation without subtokenisation.
+In order to learn our similarity model we better preprocess our training data with any tokenisation toolkit, basically aiming at reducing the vocabulary size. Any subtokenisation toolkit (such as BPE) can also be used. In our experiments we used the default tokenisation scheme implemented in [OpenNMT](http://opennmt.net) performing minimal tokenisation without subtokenisation. Any OpenNMT tokenization can be performed on the fly on the input data given a json configuration file. 
 
 ## Vocabularies
 
@@ -38,7 +51,7 @@ To generate some training examples we will need to perform word alignments and P
 Once the training parallel corpora is preprocessed we are ready to prepare our training examples:
 
 ```
-python -u build_data.py
+python -u src/build_data.py
    -seq_size       INT : sentences larger than this number of src/tgt words are filtered out [50]
    -max_sents      INT : Consider this number of sentences per batch (0 for all) [0]
    -seed           INT : seed for randomness [1234]
@@ -52,13 +65,15 @@ python -u build_data.py
 
 + Options marked with * must be set. The rest have default values.
 ```
-The input data file contains one sentence pair per line, with the next fields separated by TABs:
+The input data file contains one sentence pair per line, with the following fields separated by TABs:
 * source sentence
 * target sentence
 * source/target alignments
 * source part-of-speeches
 
  <pre>Why wait for the Euro ?   Pourquoi attendre l' Euro ?   0-0 1-1 2-1 3-2 4-3 5-4   WRB VB IN DT NNP .</pre>
+
+alternatively, if data path can be multiple files separated by comma.
 
 (The last two fields are optional)
 
@@ -89,7 +104,7 @@ Available modes:
 
 # Learning
 ```
-python -u similarity.py
+python -u src/similarity.py
 *  -mdir          FILE : directory to save/restore models
    -seq_size       INT : sentences larger than this number of src/tgt words are filtered out [50]
    -batch_size     INT : number of examples per batch [32]
@@ -98,7 +113,9 @@ python -u similarity.py
  [LEARNING OPTIONS]
 *  -trn           FILE : training data
    -dev           FILE : validation data
+   -src_tok       FILE : if provided, json tokenization options for onmt tokenization, points to vocabulary file
    -src_voc       FILE : vocabulary of src words (needed to initialize learning)
+   -tgt_tok       FILE : if provided, json tokenization options for onmt tokenization, points to vocabulary file
    -tgt_voc       FILE : vocabulary of tgt words (needed to initialize learning)
    -src_emb       FILE : embeddings of src words (needed to initialize learning)
    -tgt_emb       FILE : embeddings of tgt words (needed to initialize learning)
@@ -121,16 +138,19 @@ python -u similarity.py
 + If -mdir exists in learning mode, learning continues after restoring the last model
 + Training data is shuffled at every epoch
 ```
+
 # Inference
 ```
-python -u similarity.py
+python -u src/similarity.py
 *  -mdir          FILE : directory to save/restore models
    -batch_size     INT : number of examples per batch [32]
    -seed           INT : seed for randomness [1234]
    -debug              : debug mode
  [INFERENCE OPTIONS]
-*  -epoch          INT : epoch to use ([mdir]/epoch[epoch] must exist)
+   -epoch          INT : epoch to use ([mdir]/epoch[epoch] must exist, by default the latest one in mdir)
 *  -tst           FILE : testing data
+   -output        FILE : output file [- by default is STDOUT]
+   -q                  : quiet mode, just output similarity score
    -show_matrix        : output formatted alignment matrix (mode must be alignment)
    -show_svg           : output alignment matrix using svg-like html format (mode must be alignment)
    -show_align         : output source/target alignment matrix (mode must be alignment)
@@ -141,8 +161,18 @@ python -u similarity.py
 + -show_last, -show_aggr and -show_align can be used at the same time
 ```
 
+If files `tokenization_src.json` or `tokenization_tgt.json` are found in the model directory, the corresponding OpenNMT tokenization and sub-tokenization is performed on the fly - for instance:
+
+```
+{
+   "mode": "aggressive",
+   "vocabulary": "vocab.en"
+}
+```
+
+
 # Fixing sentence pairs
 
 ```
-python -u ./fix.py [-tau INT] [-nbest INT] [-max_sim FLOAT] [-use_punct] < FILE_WITH_ALIGNMENTS
+python -u src/fix.py [-tau INT] [-nbest INT] [-max_sim FLOAT] [-use_punct] < FILE_WITH_ALIGNMENTS
 ```
