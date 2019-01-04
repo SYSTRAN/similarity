@@ -661,6 +661,7 @@ def main():
             d.delete_pair(i, st, o)
         if o.max_sents > 0 and s.n_sents >= o.max_sents:
             break
+    t2 = time.time()
     st.show(t2-t1)
 
 
