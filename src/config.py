@@ -72,8 +72,10 @@ class Config():
 
         self.src_voc = None
         self.src_tok = None
+        self.tok_src = None
         self.tgt_voc = None
         self.tgt_tok = None
+        self.tok_tgt = None
         self.src_emb = None
         self.tgt_emb = None
         self.src_voc_size = None
