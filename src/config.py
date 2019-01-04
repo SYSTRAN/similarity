@@ -420,7 +420,7 @@ class Config():
     def write_config(self):
         if not os.path.exists(self.mdir):
             os.makedirs(self.mdir)
-        file = "{}/epoch{}.config".format(self.last_epoch)
+        file = "{}/epoch{}.config".format(self.mdir,self.last_epoch)
         with open(file, "w") as f:
             for name, val in vars(self).items():
                 if name == "usage" or name.startswith("emb_") or name.startswith("voc_"):
