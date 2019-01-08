@@ -128,7 +128,7 @@ class Config():
 
         if not self.mdir:
             sys.stderr.write("error: Missing -mdir option\n{}".format(self.usage))
-            sys.exit()
+            sys.exit(1)
 
         if self.share:
             self.tgt_voc = self.src_voc
@@ -153,7 +153,7 @@ class Config():
                     break
             if not self.epoch:
                 sys.stderr.write("error: Cannot find epoch in mdir '{}'\n{}".format(self.mdir, self.usage))
-                sys.exit()
+                sys.exit(1)
         check_dataset(self.tst)
         if self.output == '-':
             self.output = sys.stdout
@@ -161,10 +161,10 @@ class Config():
             self.output = open(self.output, "wb")
         if not os.path.exists('{}/epoch{}.index'.format(self.mdir, self.epoch)):
             sys.stderr.write('error: -epoch file {}/epoch{}.index cannot be find\n'.format(self.mdir, self.epoch))
-            sys.exit()
+            sys.exit(1)
         if not os.path.exists(self.mdir + '/topology'):
             sys.stderr.write('error: topology file: {} cannot be find\n'.format(self.mdir + '/topology'))
-            sys.exit()
+            sys.exit(1)
         src_voc = 'vocab_src'
         tgt_voc = 'vocab_tgt'
         if os.path.exists(self.mdir + '/tokenization_src.json'):
@@ -175,7 +175,7 @@ class Config():
             self.tok_src = None
         if not os.path.exists(self.mdir + '/' + src_voc):
             sys.stderr.write('error: vocab src file: {} cannot be find\n'.format(self.mdir + '/' + src_voc))
-            sys.exit()
+            sys.exit(1)
         if os.path.exists(self.mdir + '/tokenization_tgt.json'):
             with open(self.mdir + '/tokenization_tgt.json') as jsonfile:
                 self.tok_tgt = json.load(jsonfile)
@@ -212,7 +212,7 @@ class Config():
             tgt_voc = 'vocab_tgt'
             if not os.path.exists(self.mdir + '/topology'):
                 sys.stderr.write('error: topology file: {} cannot be find\n'.format(self.mdir + '/topology'))
-                sys.exit()
+                sys.exit(1)
             if os.path.exists(self.mdir + '/tokenization_src.json'):
                 with open(self.mdir + '/tokenization_src.json') as jsonfile:
                     self.tok_src = json.load(jsonfile)
@@ -221,7 +221,7 @@ class Config():
                 self.src_tok = None
             if not os.path.exists(self.mdir + '/' + src_voc):
                 sys.stderr.write('error: vocab src file: {} cannot be find\n'.format(self.mdir + '/' + src_voc))
-                sys.exit()
+                sys.exit(1)
             if os.path.exists(self.mdir + '/tokenization_tgt.json'):
                 with open(self.mdir + '/tokenization_tgt.json') as jsonfile:
                     self.tok_tgt = json.load(jsonfile)
@@ -230,11 +230,11 @@ class Config():
                 self.tgt_tok = None
             if not os.path.exists(self.mdir + '/' + tgt_voc):
                 sys.stderr.write('error: vocab tgt file: {} cannot be find\n'.format(self.mdir + '/' + tgt_voc))
-                sys.exit()
+                sys.exit(1)
             if not os.path.exists(self.mdir + '/checkpoint'):
                 sys.stderr.write('error: checkpoint file: {} cannot be find\ndelete dir {} ???\n'.format(
                     self.mdir + '/checkpoint', self.mdir))
-                sys.exit()
+                sys.exit(1)
 
             argv = []
             with open(self.mdir + "/topology", 'r') as f:
@@ -264,7 +264,7 @@ class Config():
             if self.src_tok:
                 if not os.path.exists(self.src_tok):
                     sys.stderr.write('error: cannot find -src_tok file: {}\n'.format(self.src_tok))
-                    sys.exit()
+                    sys.exit(1)
                 with open(self.src_tok) as jsonfile:
                     self.tok_src = json.load(jsonfile)
                 if not self.src_voc:
@@ -281,7 +281,7 @@ class Config():
                 if self.tgt_tok:
                     if not os.path.exists(self.tgt_tok):
                         sys.stderr.write('error: cannot find -tgt_tok file: {}\n'.format(self.tgt_tok))
-                        sys.exit()
+                        sys.exit(1)
                     with open(self.tgt_tok) as jsonfile:
                         self.tok_tgt = json.load(jsonfile)
                     if not self.tgt_voc:
@@ -412,17 +412,17 @@ class Config():
 
             elif tok == "-h":
                 sys.stderr.write("{}".format(self.usage))
-                sys.exit()
+                sys.exit(0)
 
             else:
                 sys.stderr.write('error: unparsed {} option\n'.format(tok))
                 sys.stderr.write("{}".format(self.usage))
-                sys.exit()
+                sys.exit(1)
 
     def write_config(self):
         if not os.path.exists(self.mdir):
             os.makedirs(self.mdir)
-        file = "{}/epoch{}.config".format(self.mdir,self.last_epoch)
+        file = "{}/epoch{}.config".format(self.mdir, self.last_epoch)
         with open(file, "w") as f:
             for name, val in vars(self).items():
                 if name == "usage" or name.startswith("emb_") or name.startswith("voc_"):

@@ -27,7 +27,7 @@ def main():
         else:
             sys.stderr.write('error: unparsed {} option\n'.format(tok))
             sys.stderr.write("{}".format(usage))
-            sys.exit()
+            sys.exit(1)
 
     fix = Fix(tau, nbest, max_sim)
     n_sent = 0

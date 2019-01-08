@@ -157,11 +157,11 @@ def main():
             max_sim = float(sys.argv.pop(0))
         elif (tok == "-h"):
             sys.stderr.write("{}".format(usage))
-            sys.exit()
+            sys.exit(1)
         else:
             sys.stderr.write('error: unparsed {} option\n'.format(tok))
             sys.stderr.write("{}".format(usage))
-            sys.exit()
+            sys.exit(1)
 
     fix = Fix(tau, nbest, use_punct, max_sim)
     n_sent = 0

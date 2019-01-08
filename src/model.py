@@ -240,7 +240,7 @@ class Model():
                                                      dtype=tf.float32, name="aggregation_tgt")
                 else:
                     sys.stderr.write("error: bad aggregation option '{}'\n".format(self.config.aggr))
-                    sys.exit()
+                    sys.exit(1)
                 self.output_src = tf.log(1 + tf.exp(self.aggregation_src * self.sign_src))
                 self.output_tgt = tf.log(1 + tf.exp(self.aggregation_tgt * self.sign_tgt))
 
@@ -271,7 +271,7 @@ class Model():
             optimizer = tf.train.AdadeltaOptimizer(self.lr)
         else:
             sys.stderr.write("error: bad lr_method option '{}'\n".format(self.config.lr_method))
-            sys.exit()
+            sys.exit(1)
 
         self.train_op = optimizer.minimize(self.loss)
         # tvars = tf.trainable_variables()

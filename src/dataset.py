@@ -99,7 +99,7 @@ class Vocab():
                 return self.idx_to_tok[s]
             else:
                 sys.stderr.write('error: key \'{}\' not found in vocab\n'.format(s))
-                sys.exit()
+                sys.exit(1)
         ### We want the index
         if s not in self.tok_to_idx:
             return idx_unk
@@ -113,7 +113,7 @@ def check_dataset(filepath):
     for file in files:
         if not os.path.exists(file):
             sys.stderr.write('error: file `{}` cannot be found\n'.format(file))
-            sys.exit()
+            sys.exit(1)
     return True
 
 
