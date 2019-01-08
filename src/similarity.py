@@ -19,13 +19,13 @@ def main(args):
 
     if config.trn:
         trn = Dataset(config.trn, config.voc_src, config.tok_src, config.voc_tgt, config.tok_tgt,
-                      config.seq_size, config.max_sents, do_shuffle=True)
+                      config.seq_size, config.max_sents, do_shuffle=True, do_skip_empty=True)
         dev = Dataset(config.dev, config.voc_src, config.tok_src, config.voc_tgt, config.tok_tgt,
-                      seq_size=0, max_sents=0, do_shuffle=False)
+                      seq_size=0, max_sents=0, do_shuffle=False, do_skip_empty=True)
         model.learn(trn, dev, config.n_epochs)
     if config.tst:
         tst = Dataset(config.tst, config.voc_src, config.tok_src, config.voc_tgt, config.tok_tgt,
-                      seq_size=0, max_sents=0, do_shuffle=False)
+                      seq_size=0, max_sents=0, do_shuffle=False, do_skip_empty=False)
         model.inference(tst, config.output, quiet=config.quiet)
 
     model.close_session()

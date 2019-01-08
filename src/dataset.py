@@ -119,7 +119,7 @@ def check_dataset(filepath):
 
 class Dataset():
 
-    def __init__(self, filepath, voc_src, tok_src, voc_tgt, tok_tgt, seq_size, max_sents, do_shuffle):
+    def __init__(self, filepath, voc_src, tok_src, voc_tgt, tok_tgt, seq_size, max_sents, do_shuffle, do_skip_empty):
         if filepath is None:
             return
         self.voc_src = voc_src
@@ -128,6 +128,7 @@ class Dataset():
         self.seq_size = seq_size
         self.max_sents = max_sents
         self.do_shuffle = do_shuffle
+        self.do_skip_empty = do_skip_empty
         self.annotated = False
         self.data = []
         ### length of the data set to be used (not necessarily the whole set)
@@ -197,9 +198,14 @@ class Dataset():
         for index in indexs:
             tokens = self.data[index].strip().split('\t')
             if len(tokens) != 2 and len(tokens) != 4:
-                sys.stderr.write("warning: bad data entry \'{}\' in line={} [skipped]\n".format(
+                sys.stderr.write("warning: bad data entry \'{}\' in line={}".format(
                     self.data[index], index+1))
-                continue
+                if self.do_skip_empty:
+                    sys.stderr.write(" [skipped]\n")
+                    continue
+                else:
+                    sys.stderr.write("\n")
+                    tokens = (tokens + ['N/A'])[:2]
 
             src = tokens[0].split(' ')
             tgt = tokens[1].split(' ')
