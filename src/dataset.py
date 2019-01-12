@@ -145,7 +145,7 @@ class Dataset():
         fhs = []
         for file in self.files:
             if file.endswith('.gz'):
-                fh.append(gzip.open(file, 'rb'))
+                fhs.append(gzip.open(file, 'rb'))
             else:
                 fhs.append(open(file, 'rb'))
 
