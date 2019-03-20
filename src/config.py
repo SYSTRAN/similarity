@@ -38,10 +38,6 @@ class Config():
    -src_lstm_size  INT : hidden units for src bi-lstm [256]
    -tgt_lstm_size  INT : hidden units for tgt bi-lstm [256]
 
-   -share              : shared parameters of source/target subnetworks
-                         Attention, options: tgt_voc, tgt_emb, -tgt_emb_size, -tgt_lstm_size
-                         are set the same than the corresponding src ones
-
    -lr           FLOAT : initial learning rate [1.0]
    -lr_decay     FLOAT : learning rate decay [0.9]
    -lr_method   STRING : GD method either: adam, adagrad, adadelta, sgd, rmsprop [adagrad]
@@ -91,8 +87,6 @@ class Config():
         self.emb_src = None
         self.emb_tgt = None
 
-        self.share = False
-
         self.src_lstm_size = 256
         self.tgt_lstm_size = 256
 
@@ -129,13 +123,6 @@ class Config():
         if not self.mdir:
             sys.stderr.write("error: Missing -mdir option\n{}".format(self.usage))
             sys.exit(1)
-
-        if self.share:
-            self.tgt_voc = self.src_voc
-            self.tgt_emb = self.src_emb
-            self.tgt_emb_size = self.src_emb_size
-            self.tgt_lstm_size = self.src_lstm_size
-            self.emb_tgt = self.emb_src
 
         if self.tst:
             self.inference()
@@ -193,10 +180,7 @@ class Config():
 
         # read vocabularies
         self.voc_src = Vocab(self.mdir + "/" + src_voc)
-        if self.share:
-            self.voc_tgt = self.voc_src
-        else:
-            self.voc_tgt = Vocab(self.mdir + "/" + tgt_voc)
+        self.voc_tgt = Vocab(self.mdir + "/" + tgt_voc)
         return
 
     def learn(self):
@@ -246,10 +230,7 @@ class Config():
             self.parse(argv)
             # read vocabularies
             self.voc_src = Vocab(self.mdir + "/" + src_voc)
-            if self.share:
-                self.voc_tgt = self.voc_src
-            else:
-                self.voc_tgt = Vocab(self.mdir + "/" + tgt_voc)
+            self.voc_tgt = Vocab(self.mdir + "/" + tgt_voc)
             # update last epoch
             for e in range(999, 0, -1):
                 if os.path.exists(self.mdir+"/epoch{}.index".format(e)):
@@ -274,21 +255,18 @@ class Config():
 
             self.voc_src = Vocab(self.src_voc)
 
-            if self.share:
-                self.voc_tgt = self.voc_src
-                self.tok_tgt = self.tok_src
+            if self.tgt_tok:
+                if not os.path.exists(self.tgt_tok):
+                    sys.stderr.write('error: cannot find -tgt_tok file: {}\n'.format(self.tgt_tok))
+                    sys.exit(1)
+                with open(self.tgt_tok) as jsonfile:
+                    self.tok_tgt = json.load(jsonfile)
+                if not self.tgt_voc:
+                    self.tgt_voc = self.tok_tgt["vocabulary"]
             else:
-                if self.tgt_tok:
-                    if not os.path.exists(self.tgt_tok):
-                        sys.stderr.write('error: cannot find -tgt_tok file: {}\n'.format(self.tgt_tok))
-                        sys.exit(1)
-                    with open(self.tgt_tok) as jsonfile:
-                        self.tok_tgt = json.load(jsonfile)
-                    if not self.tgt_voc:
-                        self.tgt_voc = self.tok_tgt["vocabulary"]
-                else:
-                    self.tok_tgt = None
-                self.voc_tgt = Vocab(self.tgt_voc)
+                self.tok_tgt = None
+
+            self.voc_tgt = Vocab(self.tgt_voc)
 
             self.src_voc_size = self.voc_src.length
             self.tgt_voc_size = self.voc_tgt.length
@@ -312,18 +290,14 @@ class Config():
             # read file or use emb_src.length if file is not set
             self.emb_src = Embeddings(self.src_emb, self.voc_src, self.src_emb_size)
             self.src_emb_size = self.emb_src.dim
-            if self.share:
-                self.emb_tgt = self.emb_src
-                self.tgt_emb_size = self.src_emb_size
-            else:
-                # read file or use emb_tgt.length if file is not set
-                self.emb_tgt = Embeddings(self.tgt_emb, self.voc_tgt, self.tgt_emb_size)
-                self.tgt_emb_size = self.emb_tgt.dim
+            # read file or use emb_tgt.length if file is not set
+            self.emb_tgt = Embeddings(self.tgt_emb, self.voc_tgt, self.tgt_emb_size)
+            self.tgt_emb_size = self.emb_tgt.dim
             # write topology file
             with open(self.mdir + "/topology", 'w') as f:
                 for opt, val in vars(self).items():
                     if opt.startswith("src") or opt.startswith("tgt") or \
-                            opt == "aggr" or opt == "mode" or opt == "share":
+                            opt == "aggr" or opt == "mode":
                         f.write("{} {}\n".format(opt, val))
             print("learning from scratch")
         return
@@ -374,9 +348,6 @@ class Config():
                 self.src_lstm_size = int(argv.pop(0))
             elif (tok == "-tgt_lstm_size" and len(argv)):
                 self.tgt_lstm_size = int(argv.pop(0))
-
-            elif (tok == "-share" and len(argv)):
-                self.share = argv.pop(0) == "True"
 
             elif (tok == "-seq_size" and len(argv)):
                 self.seq_size = int(argv.pop(0))
