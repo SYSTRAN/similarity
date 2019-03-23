@@ -209,6 +209,10 @@ class Dataset():
 
             src = tokens[0].split(' ')
             tgt = tokens[1].split(' ')
+            if len(src) > 500 and not self.do_skip_empty:
+                src = src[0:500]
+            if len(tgt) > 500 and not self.do_skip_empty:
+                tgt = tgt[0:500]
             if self.seq_size > 0 and (len(src) > self.seq_size or len(tgt) > self.seq_size):
                 # filter out examples with more than seq_size tokens
                 continue
