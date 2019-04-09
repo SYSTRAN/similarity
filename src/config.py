@@ -309,6 +309,10 @@ class Config():
                 self.mdir = argv.pop(0)
             elif (tok == "-epoch" and len(argv)):
                 self.epoch = int(argv.pop(0))
+            elif (tok == "-src_tok" and len(argv)):
+                self.src_tok = argv.pop(0)
+            elif (tok == "-tgt_tok" and len(argv)):
+                self.tgt_tok = argv.pop(0)
             elif (tok == "-src_voc" and len(argv)):
                 self.src_voc = argv.pop(0)
             elif (tok == "-tgt_voc" and len(argv)):
