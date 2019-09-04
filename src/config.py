@@ -130,6 +130,12 @@ class Config():
             self.learn()
         return
 
+    def update_bpe_sp_model_path(self, tok):
+        if "bpe_model_path" in tok:
+            tok["bpe_model_path"] = self.mdir + "/" + tok["bpe_model_path"]
+        if "sp_model_path" in tok:
+            tok["sp_model_path"] = self.mdir + "/" + tok["sp_model_path"]
+
     def inference(self):
         self.dropout = 0.0
         self.seq_size = 0
@@ -157,6 +163,7 @@ class Config():
         if os.path.exists(self.mdir + '/tokenization_src.json'):
             with open(self.mdir + '/tokenization_src.json') as jsonfile:
                 self.tok_src = json.load(jsonfile)
+            self.update_bpe_sp_model_path(self.tok_src)
             src_voc = self.tok_src["vocabulary"]
         else:
             self.tok_src = None
@@ -166,6 +173,7 @@ class Config():
         if os.path.exists(self.mdir + '/tokenization_tgt.json'):
             with open(self.mdir + '/tokenization_tgt.json') as jsonfile:
                 self.tok_tgt = json.load(jsonfile)
+            self.update_bpe_sp_model_path(self.tok_tgt)
             tgt_voc = self.tok_tgt["vocabulary"]
         else:
             self.tok_tgt = None
