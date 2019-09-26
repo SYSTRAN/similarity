@@ -23,6 +23,7 @@ class options():
         self.debug = False
         self.replace = None
         self.data = None
+        self.output = None
         usage = """usage: {}
    -seq_size       INT : sentences larger than this number of src/tgt words are filtered out [50]
    -max_sents      INT : Consider this number of sentences per batch (0 for all) [0]
@@ -34,6 +35,7 @@ class options():
 *  -data          FILE : training data
    -mode        STRING : how data examples are generated (p: parallel, u:uneven, i:insert, r:replace d:delete) [p]
    -replace       FILE : equivalent sequences (needed when -data_mode contains r)
+   -output       FILE : if set, put the data into output file, otherwise stdout
 
 - Options marked with * must be set. The other ones have default values.
 """.format(argv.pop(0))
@@ -54,6 +56,8 @@ class options():
                 self.seed = int(argv.pop(0))
             elif (tok == "-replace" and len(argv)):
                 self.replace = argv.pop(0)
+            elif (tok == "-output" and len(argv)):
+                self.output = argv.pop(0)
             elif (tok == "-h"):
                 sys.stderr.write("{}".format(usage))
                 sys.exit()
@@ -183,13 +187,14 @@ class replace():
 
 class dataset():
 
-    def __init__(self, r):
+    def __init__(self, r, output):
         self.SRC = []
         self.TGT = []
         self.ALI = []
         self.POS = []
         self.max_ntry = 50
         self.r = r
+        self.output = output
 
     def __len__(self):
         return len(self.SRC)
@@ -209,7 +214,7 @@ class dataset():
         tgt = list(self.TGT[i])
         src_tag = ['-1.0' for i in range(len(src))]
         tgt_tag = ['-1.0' for i in range(len(tgt))]
-        print("{}\t{}\t{}\t{}".format(" ".join(src), " ".join(tgt), " ".join(src_tag), " ".join(tgt_tag)))
+        self.output.write("{}\t{}\t{}\t{}\n".format(" ".join(src), " ".join(tgt), " ".join(src_tag), " ".join(tgt_tag)))
         st.n_parallel += 1
         st.n_src_words += len(src)
         st.n_tgt_words += len(tgt)
@@ -243,7 +248,7 @@ class dataset():
 
         src_tag = ['1.0' for i in range(len(src))]
         tgt_tag = ['1.0' for i in range(len(tgt))]
-        print("{}\t{}\t{}\t{}".format(" ".join(src), " ".join(tgt), " ".join(src_tag), " ".join(tgt_tag)))
+        self.output.write("{}\t{}\t{}\t{}\n".format(" ".join(src), " ".join(tgt), " ".join(src_tag), " ".join(tgt_tag)))
         st.n_uneven += 1
         st.n_src_words += len(src)
         st.n_tgt_words += len(tgt)
@@ -325,7 +330,7 @@ class dataset():
                     tgt_tag.append('1.0')
             st.n_tgt_divergent += len(add)
 
-        print("{}\t{}\t{}\t{}".format(" ".join(src), " ".join(tgt), " ".join(src_tag), " ".join(tgt_tag)))
+        self.output.write("{}\t{}\t{}\t{}\n".format(" ".join(src), " ".join(tgt), " ".join(src_tag), " ".join(tgt_tag)))
         st.n_insert += 1
         st.n_src_words += len(src)
         st.n_tgt_words += len(tgt)
@@ -408,7 +413,7 @@ class dataset():
                     src_tag.append('1.0')
                     st.n_src_divergent += 1
 
-        print("{}\t{}\t{}\t{}".format(" ".join(src), " ".join(tgt), " ".join(src_tag), " ".join(tgt_tag)))
+        self.output.write("{}\t{}\t{}\t{}\n".format(" ".join(src), " ".join(tgt), " ".join(src_tag), " ".join(tgt_tag)))
         st.n_delete += 1
         st.n_src_words += len(src)
         st.n_tgt_words += len(tgt)
@@ -458,7 +463,7 @@ class dataset():
             tgt_tag[t] = '1.0'
             st.n_tgt_divergent += 1
 
-        print("{}\t{}\t{}\t{}".format(" ".join(src), " ".join(tgt), " ".join(src_tag), " ".join(tgt_tag)))
+        self.output.write("{}\t{}\t{}\t{}\n".format(" ".join(src), " ".join(tgt), " ".join(src_tag), " ".join(tgt_tag)))
         st.n_replace += 1
         st.n_src_words += len(src)
         st.n_tgt_words += len(tgt)
@@ -594,10 +599,15 @@ class dataset():
         return bmin, bmax
 
 
-def main():
-    o = options(sys.argv)
+def main(args):
+    o = options(args)
     r = replace(o.replace)
-    d = dataset(r)
+
+    outputfile = sys.stdout
+    if o.output:
+        outputfile = open(o.output,"w")
+
+    d = dataset(r, outputfile)
     t0 = time.time()
     with io.open(o.data, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
         i = 0
@@ -664,6 +674,8 @@ def main():
     t2 = time.time()
     st.show(t2-t1)
 
+    if outputfile is not sys.stdout:
+        outputfile.close()
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)

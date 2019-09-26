@@ -199,12 +199,9 @@ class Config():
         ###
         #  continuation
         ###
-        if os.path.exists(self.mdir):
+        if os.path.exists(self.mdir) and os.path.exists(self.mdir + '/topology'):
             src_voc = 'vocab_src'
             tgt_voc = 'vocab_tgt'
-            if not os.path.exists(self.mdir + '/topology'):
-                sys.stderr.write('error: topology file: {} cannot be find\n'.format(self.mdir + '/topology'))
-                sys.exit(1)
             if os.path.exists(self.mdir + '/tokenization_src.json'):
                 with open(self.mdir + '/tokenization_src.json') as jsonfile:
                     self.tok_src = json.load(jsonfile)
